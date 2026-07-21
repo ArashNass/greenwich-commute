@@ -193,8 +193,13 @@
     box-shadow:0 1px 2px rgba(17,21,28,0.04);
   }
   .compare-card.best{
-    border-color:var(--tfl-blue);
-    box-shadow:0 0 0 2px rgba(0,25,168,0.14);
+    border-width:1px;
+    border-style:solid;
+  }
+  .compare-card .segments{
+    font-size:11px;
+    color:var(--muted-light);
+    margin-top:5px;
   }
   .compare-card .ch{
     display:flex;
@@ -416,7 +421,7 @@ function renderBoard(el, arrivals, emptyMsg){
     el.innerHTML = `<div class="status">${emptyMsg}</div>`;
     return;
   }
-  const rows = arrivals.slice(0,4).map(a => `
+  const rows = arrivals.slice(0,5).map(a => `
     <tr>
       <td class="dest">${operatorBadge('DLR')}${a.destinationName || a.towards || 'Unknown'}</td>
       <td class="plat">${a.platformName ? 'Plat ' + a.platformName : ''}</td>
@@ -563,80 +568,108 @@ async function loadDepartures(){
   document.getElementById('railUpdated').textContent = (railResult.ok ? 'updated ' : 'error · ') + stamp;
 
   // Fixed (non-wait) segments, from real measured journey times:
-  // DLR: walk home->Cutty Sark (8) + DLR ride (21) + walk Bank->office (4)
-  const DLR_FIXED_MIN = 8 + 21 + 4;   // 33
-  // Rail: walk home->Greenwich (13) + ride to London Bridge (9) + walk London Bridge->office (7)
-  // (alighting at London Bridge beats riding on to Cannon Street: 9+7=16 vs 13+9=22)
-  const RAIL_FIXED_MIN = 13 + 9 + 7;  // 29
+  const DLR_WALK_TO_STATION = 8;   // walk home -> Cutty Sark
+  const DLR_RIDE_MIN = 21;
+  const DLR_WALK_FROM_STATION = 4; // walk Bank -> office
+  const DLR_FIXED_MIN = DLR_WALK_TO_STATION + DLR_RIDE_MIN + DLR_WALK_FROM_STATION; // 33
+
+  const RAIL_WALK_TO_STATION = 13;  // walk home -> Greenwich
+  const RAIL_RIDE_MIN = 9;
+  const RAIL_WALK_FROM_STATION = 7; // walk London Bridge -> office
+  const RAIL_FIXED_MIN = RAIL_WALK_TO_STATION + RAIL_RIDE_MIN + RAIL_WALK_FROM_STATION; // 29
+
   const GETREADY_MIN = 5; // time needed before you can walk out the door
 
   function fmtClock(d){
     return d.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit', hour12:false });
   }
 
-  // Pick the first departure that's actually reachable given GETREADY_MIN.
-  // waitMinsList: array of minutes-from-now for each upcoming departure, in order.
-  function pickReachable(waitMinsList){
-    for(const w of waitMinsList){
-      if(w >= GETREADY_MIN) return { waitMin:w, tooTight:false };
+  // Pick the first departure you can actually make: you need GETREADY_MIN to
+  // leave the house, PLUS the walk time to that specific station. A train
+  // leaving in 3 min is useless if the walk there alone takes 13 min.
+  function pickReachable(items, minWaitMin){
+    for(const item of items){
+      if(item.wait >= minWaitMin) return { ...item, tooTight:false };
     }
-    // Nothing comfortably reachable - fall back to the last one we have, flagged as tight.
-    if(waitMinsList.length) return { waitMin:waitMinsList[waitMinsList.length-1], tooTight:true };
+    if(items.length) return { ...items[items.length-1], tooTight:true };
     return null;
   }
 
-  function renderCard(cardId, ok, waitMinsList, fixedMin, emptyMsg){
+  function renderCard(cardId, ok, items, fixedMin, minWaitMin, segmentsText, emptyMsg){
     const card = document.getElementById(cardId);
-    if(!ok || !waitMinsList.length){
+    if(!ok || !items.length){
       card.querySelector('.depart').innerHTML = emptyMsg;
       const oldArrive = card.querySelector('.arrive'); if(oldArrive) oldArrive.remove();
       const oldCaution = card.querySelector('.caution'); if(oldCaution) oldCaution.remove();
+      const oldSeg = card.querySelector('.segments'); if(oldSeg) oldSeg.remove();
       return null;
     }
-    const pick = pickReachable(waitMinsList);
+    const pick = pickReachable(items, minWaitMin);
     const now = new Date();
-    const departClock = new Date(now.getTime() + pick.waitMin * 60000);
-    const arriveClock = new Date(now.getTime() + (pick.waitMin + fixedMin) * 60000);
-    const totalMin = Math.round(pick.waitMin + fixedMin);
+    const departClock = new Date(now.getTime() + pick.wait * 60000);
+    const arriveClock = new Date(now.getTime() + (pick.wait + fixedMin) * 60000);
+    const totalMin = Math.round(pick.wait + fixedMin);
 
     card.querySelector('.depart').innerHTML =
-      `${fmtClock(departClock)}<small>next departure${pick.waitMin <= 0 ? ', due now' : ` · in ${Math.round(pick.waitMin)} min`}</small>`;
+      `${fmtClock(departClock)}<small>next departure${pick.wait <= 0 ? ', due now' : ` · in ${Math.round(pick.wait)} min`}</small>`;
 
     let arriveEl = card.querySelector('.arrive');
     if(!arriveEl){ arriveEl = document.createElement('div'); arriveEl.className = 'arrive'; card.appendChild(arriveEl); }
     arriveEl.innerHTML = `Arrive desk ~<b>${fmtClock(arriveClock)}</b> <span style="color:var(--muted-light)">(${totalMin} min door to door)</span>`;
 
+    let segEl = card.querySelector('.segments');
+    if(!segEl){ segEl = document.createElement('div'); segEl.className = 'segments'; card.appendChild(segEl); }
+    segEl.textContent = segmentsText;
+
     let cautionEl = card.querySelector('.caution');
     if(pick.tooTight){
       if(!cautionEl){ cautionEl = document.createElement('div'); cautionEl.className = 'caution'; card.appendChild(cautionEl); }
-      cautionEl.textContent = `Cutting it close - less than ${GETREADY_MIN} min to get ready for this one.`;
+      cautionEl.textContent = `None of the live departures leave enough time to walk there + get ready (need ${minWaitMin} min) - showing the soonest anyway, but you'll be cutting it fine.`;
     } else if(cautionEl){
       cautionEl.remove();
     }
-    return totalMin;
+    return { totalMin, operator: pick.operator || null };
   }
 
-  const dlrWaits = dlrArr.map(a => a.timeToStation / 60);
-  const railWaits = railArr.map(s => minsUntil(s.std)).filter(m => m !== null);
+  const dlrItems = dlrArr.map(a => ({ wait: a.timeToStation / 60 }));
+  const railItems = railArr.map(s => ({ wait: minsUntil(s.std), operator: s.operator })).filter(i => i.wait !== null);
 
-  const dlrTotal = renderCard('dlrCard', dlrResult.ok, dlrWaits, DLR_FIXED_MIN,
-    dlrResult.error || 'No DLR departures right now.');
-  const railTotal = renderCard('railCard', railResult.ok, railWaits, RAIL_FIXED_MIN,
-    railResult.error || 'No rail departures right now.');
+  const dlrResultCard = renderCard('dlrCard', dlrResult.ok, dlrItems, DLR_FIXED_MIN,
+    GETREADY_MIN + DLR_WALK_TO_STATION,
+    `8 min walk + 21 min DLR + 4 min walk`, dlrResult.error || 'No DLR departures right now.');
+  const railResultCard = renderCard('railCard', railResult.ok, railItems, RAIL_FIXED_MIN,
+    GETREADY_MIN + RAIL_WALK_TO_STATION,
+    `13 min walk + 9 min train + 7 min walk`, railResult.error || 'No rail departures right now.');
 
-  // Highlight whichever is genuinely faster once both are known.
-  document.getElementById('dlrCard').classList.remove('best');
-  document.getElementById('railCard').classList.remove('best');
-  if(dlrTotal !== null && railTotal !== null){
-    const winner = dlrTotal <= railTotal ? 'dlrCard' : 'railCard';
-    document.getElementById(winner).classList.add('best');
-    document.querySelector(`#${winner} h3`).parentElement.querySelector('.pill')?.remove();
+  // Reset any previous highlight
+  ['dlrCard','railCard'].forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.remove('best');
+    el.style.borderColor = '';
+    el.style.boxShadow = '';
+    el.querySelector('.pill')?.remove();
+  });
+
+  if(dlrResultCard && railResultCard){
+    const winnerIsDlr = dlrResultCard.totalMin <= railResultCard.totalMin;
+    const winnerId = winnerIsDlr ? 'dlrCard' : 'railCard';
+    let winnerColor;
+    if(winnerIsDlr){
+      winnerColor = 'var(--dlr)';
+    } else {
+      const opColors = { 'Southeastern':'#0a2a52', 'Thameslink':'#84144f' };
+      winnerColor = opColors[railResultCard.operator] || 'var(--rail-blue)';
+    }
+    const winnerEl = document.getElementById(winnerId);
+    winnerEl.classList.add('best');
+    winnerEl.style.borderColor = winnerColor;
+    winnerEl.style.boxShadow = `0 0 0 2px ${winnerColor}`;
     const pill = document.createElement('span');
     pill.className = 'pill';
     pill.textContent = 'Faster';
-    document.querySelector(`#${winner} .ch`).appendChild(pill);
-    const loserId = winner === 'dlrCard' ? 'railCard' : 'dlrCard';
-    document.querySelector(`#${loserId} .pill`)?.remove();
+    pill.style.background = winnerColor;
+    pill.style.color = '#fff';
+    winnerEl.querySelector('.ch').appendChild(pill);
   }
 }
 
