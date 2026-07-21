@@ -226,14 +226,25 @@ async function resolveStops(){
     dlrStopId = DLR_FALLBACK_ID;
   }
 
-  // National Rail: Greenwich station
+  // National Rail: Greenwich station — search gives a hub id (e.g. HUBGNW),
+  // but /Arrivals on a hub id returns nothing. Look up the hub's children
+  // and use the specific national-rail child stop instead.
   try{
     const res = await fetch('https://api.tfl.gov.uk/StopPoint/Search/Greenwich?modes=national-rail');
     if(!res.ok) throw new Error('search http ' + res.status);
     const data = await res.json();
     const matches = (data.matches || []).filter(m => m.modes && m.modes.includes('national-rail'));
-    const exact = matches.find(m => /^Greenwich( Rail Station)?$/i.test(m.name || ''));
-    railStopId = (exact || matches[0] || {}).id || null;
+    const best = matches.find(m => /^Greenwich$/i.test(m.name || '')) || matches[0];
+    if(!best) throw new Error('no match found');
+
+    if(best.id && best.id.startsWith('HUB')){
+      const hubRes = await fetch(`https://api.tfl.gov.uk/StopPoint/${best.id}`);
+      const hubData = await hubRes.json();
+      const child = (hubData.children || []).find(c => c.modes && c.modes.includes('national-rail'));
+      railStopId = child ? child.id : best.id;
+    } else {
+      railStopId = best.id;
+    }
   }catch(e){
     console.warn('Rail stop search failed:', e);
     railStopId = null;
