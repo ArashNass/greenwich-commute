@@ -209,46 +209,16 @@ async function loadWeather(){
 }
 
 // ---------- TFL DEPARTURES ----------
-// Known-good StopPoint id as a reliable fallback (verified against TfL data).
+// Known-good StopPoint ids, confirmed directly against TfL's API.
 const DLR_FALLBACK_ID = '940GZZDLCUT';   // Cutty Sark for Maritime Greenwich DLR station
-let dlrStopId = null, railStopId = null;
+const RAIL_FALLBACK_ID = '910GGNWH';     // Greenwich Rail Station (national-rail child of HUBGNW)
+let dlrStopId = DLR_FALLBACK_ID, railStopId = RAIL_FALLBACK_ID;
 
 async function resolveStops(){
-  // DLR: Cutty Sark station specifically
-  try{
-    const res = await fetch('https://api.tfl.gov.uk/StopPoint/Search/Cutty%20Sark?modes=dlr');
-    if(!res.ok) throw new Error('search http ' + res.status);
-    const data = await res.json();
-    const match = (data.matches || []).find(m => m.modes && m.modes.includes('dlr'));
-    dlrStopId = match ? match.id : DLR_FALLBACK_ID;
-  }catch(e){
-    console.warn('DLR stop search failed, using fallback id:', e);
-    dlrStopId = DLR_FALLBACK_ID;
-  }
-
-  // National Rail: Greenwich station — search gives a hub id (e.g. HUBGNW),
-  // but /Arrivals on a hub id returns nothing. Look up the hub's children
-  // and use the specific national-rail child stop instead.
-  try{
-    const res = await fetch('https://api.tfl.gov.uk/StopPoint/Search/Greenwich?modes=national-rail');
-    if(!res.ok) throw new Error('search http ' + res.status);
-    const data = await res.json();
-    const matches = (data.matches || []).filter(m => m.modes && m.modes.includes('national-rail'));
-    const best = matches.find(m => /^Greenwich$/i.test(m.name || '')) || matches[0];
-    if(!best) throw new Error('no match found');
-
-    if(best.id && best.id.startsWith('HUB')){
-      const hubRes = await fetch(`https://api.tfl.gov.uk/StopPoint/${best.id}`);
-      const hubData = await hubRes.json();
-      const child = (hubData.children || []).find(c => c.modes && c.modes.includes('national-rail'));
-      railStopId = child ? child.id : best.id;
-    } else {
-      railStopId = best.id;
-    }
-  }catch(e){
-    console.warn('Rail stop search failed:', e);
-    railStopId = null;
-  }
+  // These are already correct and confirmed; skip live lookup entirely to avoid
+  // re-breaking on TfL's inconsistent hub/child structures. Kept as a no-op
+  // placeholder in case station IDs ever need to change.
+  return;
 }
 
 function fmtMins(sec){
