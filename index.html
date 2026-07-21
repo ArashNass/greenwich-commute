@@ -208,18 +208,10 @@ async function loadWeather(){
   }
 }
 
-// ---------- TFL DEPARTURES ----------
-// Known-good StopPoint ids, confirmed directly against TfL's API.
+// ---------- TFL DEPARTURES (DLR) ----------
+// Known-good StopPoint id, confirmed directly against TfL's API.
 const DLR_FALLBACK_ID = '940GZZDLCUT';   // Cutty Sark for Maritime Greenwich DLR station
-const RAIL_FALLBACK_ID = '910GGNWH';     // Greenwich Rail Station (national-rail child of HUBGNW)
-let dlrStopId = DLR_FALLBACK_ID, railStopId = RAIL_FALLBACK_ID;
-
-async function resolveStops(){
-  // These are already correct and confirmed; skip live lookup entirely to avoid
-  // re-breaking on TfL's inconsistent hub/child structures. Kept as a no-op
-  // placeholder in case station IDs ever need to change.
-  return;
-}
+let dlrStopId = DLR_FALLBACK_ID;
 
 function fmtMins(sec){
   const m = Math.round(sec/60);
@@ -233,48 +225,93 @@ function renderBoard(el, arrivals, emptyMsg){
   }
   const rows = arrivals.slice(0,4).map(a => `
     <tr>
-      <td class="dest">${a.destinationName || a.towards || 'Unknown'}${a.operatorName ? `<br><span class="plat" style="font-size:11px;">${a.operatorName}</span>` : ''}</td>
+      <td class="dest">${a.destinationName || a.towards || 'Unknown'}</td>
       <td class="plat">${a.platformName ? 'Plat ' + a.platformName : ''}</td>
       <td class="time">${fmtMins(a.timeToStation)}</td>
     </tr>`).join('');
   el.innerHTML = `<table>${rows}</table>`;
 }
 
-// Fetch arrivals for a given stop id, returning { ok, data, error }
-async function fetchArrivals(stopId, label){
-  if(!stopId) return { ok:false, data:[], error:`Could not find a station id for ${label}.` };
+async function fetchDlrArrivals(){
   try{
-    const res = await fetch(`https://api.tfl.gov.uk/StopPoint/${stopId}/Arrivals`);
+    const res = await fetch(`https://api.tfl.gov.uk/StopPoint/${dlrStopId}/Arrivals`);
     if(!res.ok){
       const body = await res.text();
-      return { ok:false, data:[], error:`TfL API returned ${res.status} for ${label}: ${body.slice(0,150)}` };
+      return { ok:false, data:[], error:`TfL API returned ${res.status}: ${body.slice(0,150)}` };
     }
     const data = await res.json();
-    if(!Array.isArray(data)) return { ok:false, data:[], error:`Unexpected response shape for ${label}.` };
+    if(!Array.isArray(data)) return { ok:false, data:[], error:'Unexpected response shape from TfL.' };
     return { ok:true, data, error:null };
   }catch(e){
-    return { ok:false, data:[], error:`Network/CORS error fetching ${label}: ${e.message}` };
+    return { ok:false, data:[], error:`Network error fetching DLR: ${e.message}` };
+  }
+}
+
+// ---------- NATIONAL RAIL (Huxley2 / Darwin) ----------
+const RAIL_FROM_CRS = 'GNW';   // Greenwich
+const RAIL_TO_CRS = 'LBG';     // London Bridge
+
+function minsUntil(hhmm){
+  if(!hhmm || !/^\d{2}:\d{2}$/.test(hhmm)) return null;
+  const now = new Date();
+  const [h,m] = hhmm.split(':').map(Number);
+  const target = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0);
+  let diff = Math.round((target - now) / 60000);
+  if(diff < -60) diff += 24 * 60; // rolled past midnight
+  return diff;
+}
+
+function renderRailBoard(el, services, emptyMsg){
+  if(!services.length){
+    el.innerHTML = `<div class="status">${emptyMsg}</div>`;
+    return;
+  }
+  const rows = services.slice(0,4).map(s => {
+    const dest = (s.destination && s.destination[0] && s.destination[0].locationName) || 'Unknown';
+    const status = s.etd && s.etd !== 'On time' ? s.etd : 'On time';
+    const mins = minsUntil(s.std);
+    const timeLabel = mins === null ? (s.std || '--:--') : (mins <= 0 ? 'Due' : `${mins} min`);
+    return `
+    <tr>
+      <td class="dest">${dest}<br><span class="plat" style="font-size:11px;">${s.operator || ''} · ${status}</span></td>
+      <td class="plat">${s.platform ? 'Plat ' + s.platform : ''}</td>
+      <td class="time">${timeLabel}</td>
+    </tr>`;
+  }).join('');
+  el.innerHTML = `<table>${rows}</table>`;
+}
+
+async function fetchRailDepartures(){
+  try{
+    const res = await fetch(`https://huxley2.azurewebsites.net/departures/${RAIL_FROM_CRS}/to/${RAIL_TO_CRS}/4`);
+    if(!res.ok){
+      const body = await res.text();
+      return { ok:false, data:[], error:`Huxley returned ${res.status}: ${body.slice(0,150)}` };
+    }
+    const data = await res.json();
+    const services = data.trainServices || [];
+    return { ok:true, data:services, error: services.length ? null : 'No Southeastern/Thameslink services returned right now.' };
+  }catch(e){
+    return { ok:false, data:[], error:`Network error fetching rail: ${e.message}` };
   }
 }
 
 async function loadDepartures(){
-  if(!dlrStopId || !railStopId) await resolveStops();
-
   const [dlrResult, railResult] = await Promise.all([
-    fetchArrivals(dlrStopId, 'DLR (Cutty Sark)'),
-    fetchArrivals(railStopId, 'National Rail (Greenwich)')
+    fetchDlrArrivals(),
+    fetchRailDepartures()
   ]);
 
   let dlrArr = dlrResult.data
     .filter(a => a.direction === 'inbound')   // inbound = towards Bank/Tower Gateway from Cutty Sark
     .sort((a,b) => a.timeToStation - b.timeToStation);
-  let railArr = railResult.data.sort((a,b) => a.timeToStation - b.timeToStation);
+  let railArr = railResult.data; // Huxley already returns them in departure order
 
   renderBoard(
     document.getElementById('dlrBoard'), dlrArr,
     dlrResult.error || 'No DLR departures returned right now.'
   );
-  renderBoard(
+  renderRailBoard(
     document.getElementById('railBoard'), railArr,
     railResult.error || 'No rail departures returned right now.'
   );
@@ -284,20 +321,21 @@ async function loadDepartures(){
   document.getElementById('railUpdated').textContent = (railResult.ok ? 'updated ' : 'error · ') + stamp;
 
   const rec = document.getElementById('recommendation');
+  const railFirstMins = railArr.length ? (minsUntil(railArr[0].std) ?? 0) : null;
   if(dlrArr.length && railArr.length){
     const dlrEta = dlrArr[0].timeToStation/60 + 23;
-    const railEta = railArr[0].timeToStation/60 + 8 + 10;
+    const railEta = railFirstMins + 8 + 10;
     if(dlrEta <= railEta){
       rec.innerHTML = `<b>Take the DLR</b> - next one in ${fmtMins(dlrArr[0].timeToStation)}, roughly ${Math.round(dlrEta)} min door to Bank.
         <span class="note">Rail option today: about ${Math.round(railEta)} min via London Bridge.</span>`;
     } else {
-      rec.innerHTML = `<b>Take the train to London Bridge</b>, next one in ${fmtMins(railArr[0].timeToStation)}, roughly ${Math.round(railEta)} min door to Bank.
+      rec.innerHTML = `<b>Take the train to London Bridge</b>, next one in ${railFirstMins} min, roughly ${Math.round(railEta)} min door to Bank.
         <span class="note">DLR option today: about ${Math.round(dlrEta)} min direct.</span>`;
     }
   } else if(dlrArr.length){
     rec.innerHTML = `<b>DLR is your best bet</b> - next one in ${fmtMins(dlrArr[0].timeToStation)}. Rail board has nothing right now.`;
   } else if(railArr.length){
-    rec.innerHTML = `<b>Train to London Bridge is your best bet</b> - next one in ${fmtMins(railArr[0].timeToStation)}. DLR board has nothing right now.`;
+    rec.innerHTML = `<b>Train to London Bridge is your best bet</b> - next one in ${railFirstMins} min. DLR board has nothing right now.`;
   } else {
     rec.innerHTML = `Couldn't get live departures for either.<span class="note">${dlrResult.error || ''} ${railResult.error || ''}</span>`;
   }
