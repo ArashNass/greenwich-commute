@@ -4,60 +4,66 @@
 <meta charset="UTF-8">
 <title>Greenwich → Work</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&display=swap');
 
   :root{
-    --bg:#14181b;
-    --panel:#1c2227;
-    --panel-edge:#2a3238;
-    --amber:#ffb200;
-    --amber-dim:#8a6103;
-    --dlr:#00b3b0;
-    --rail:#7ac74f;
-    --paper:#e9e6dc;
-    --muted:#7d8790;
-    --red:#e2543f;
+    --bg:#eef1f5;
+    --panel:#ffffff;
+    --border:#e1e6ec;
+    --ink:#11151c;
+    --muted:#6b7280;
+    --muted-light:#9aa3ad;
+
+    --tfl-blue:#0019a8;      /* London Underground / TfL corporate blue */
+    --tfl-blue-dark:#000f66;
+    --dlr:#00a4a6;           /* DLR teal */
+    --rail-blue:#003087;     /* National Rail double-arrow blue */
+    --rail-red:#e32017;      /* National Rail double-arrow red */
+    --good:#027a3a;          /* service good / on time */
+    --warn:#c75300;          /* delays */
   }
   *{box-sizing:border-box;}
   body{
     margin:0;
     background:var(--bg);
-    background-image:
-      radial-gradient(ellipse at top left, rgba(255,178,0,0.05), transparent 55%),
-      repeating-linear-gradient(180deg, rgba(255,255,255,0.012) 0px, rgba(255,255,255,0.012) 1px, transparent 1px, transparent 3px);
-    color:var(--paper);
-    font-family:'IBM Plex Sans', sans-serif;
-    padding:22px 16px 40px;
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    padding:28px 16px 44px;
+    -webkit-font-smoothing:antialiased;
   }
   .wrap{max-width:720px;margin:0 auto;}
 
   header{
     display:flex;
     justify-content:space-between;
-    align-items:flex-end;
-    border-bottom:2px solid var(--panel-edge);
-    padding-bottom:14px;
-    margin-bottom:18px;
+    align-items:center;
+    margin-bottom:20px;
   }
-  header .place{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:12px;
-    letter-spacing:3px;
-    color:var(--muted);
+  header .eyebrow{
+    font-size:11.5px;
+    font-weight:600;
+    letter-spacing:2.5px;
+    color:var(--tfl-blue);
     text-transform:uppercase;
   }
   header h1{
     margin:2px 0 0;
-    font-size:26px;
-    font-weight:600;
-    letter-spacing:0.5px;
+    font-family:'Archivo', sans-serif;
+    font-size:28px;
+    font-weight:800;
+    letter-spacing:-0.3px;
+    color:var(--ink);
   }
-  header h1 span{color:var(--amber);}
+  header h1 span{color:var(--rail-red);}
   #clock{
     font-family:'IBM Plex Mono',monospace;
-    font-size:22px;
-    color:var(--amber);
-    letter-spacing:1px;
+    font-size:15px;
+    font-weight:600;
+    color:var(--muted);
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:999px;
+    padding:7px 14px;
   }
 
   .weather{
@@ -65,68 +71,192 @@
     align-items:center;
     gap:16px;
     background:var(--panel);
-    border:1px solid var(--panel-edge);
-    border-radius:10px;
-    padding:14px 18px;
-    margin-bottom:20px;
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:16px 18px;
+    margin-bottom:16px;
+    box-shadow:0 1px 2px rgba(17,21,28,0.04);
+  }
+  .roundel{
+    flex-shrink:0;
+    width:60px;
+    height:60px;
   }
   .weather .temp{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:34px;
-    font-weight:600;
-    color:var(--paper);
+    font-family:'Archivo', sans-serif;
+    font-size:26px;
+    font-weight:800;
+    color:var(--ink);
+    line-height:1;
   }
   .weather .desc{
     font-size:13px;
     color:var(--muted);
     line-height:1.5;
+    margin-top:4px;
   }
-  .weather .desc b{color:var(--paper);font-weight:500;}
+  .weather .desc b{color:var(--ink);font-weight:600;}
 
   .banner{
-    background:linear-gradient(90deg, rgba(255,178,0,0.12), rgba(255,178,0,0.02));
-    border:1px solid var(--amber-dim);
-    border-left:4px solid var(--amber);
-    border-radius:6px;
-    padding:12px 16px;
-    margin-bottom:22px;
+    background:#fff;
+    border:1px solid var(--border);
+    border-left:4px solid var(--tfl-blue);
+    border-radius:10px;
+    padding:13px 16px;
+    margin-bottom:20px;
     font-size:14px;
+    box-shadow:0 1px 2px rgba(17,21,28,0.04);
   }
-  .banner b{color:var(--amber);}
-  .banner .note{display:block;color:var(--muted);font-size:11.5px;margin-top:4px;}
+  .banner b{color:var(--tfl-blue);}
+  .banner .note{display:block;color:var(--muted-light);font-size:11.5px;margin-top:5px;}
 
   .board{
     background:var(--panel);
-    border:1px solid var(--panel-edge);
-    border-radius:10px;
-    margin-bottom:18px;
+    border:1px solid var(--border);
+    border-radius:14px;
+    margin-bottom:16px;
     overflow:hidden;
+    box-shadow:0 1px 2px rgba(17,21,28,0.04);
   }
   .board-head{
     display:flex;
     align-items:center;
     gap:10px;
-    padding:12px 16px;
-    border-bottom:1px solid var(--panel-edge);
+    padding:13px 16px;
+    border-bottom:1px solid var(--border);
   }
-  .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-  .board-head h2{font-size:14px;margin:0;letter-spacing:1px;text-transform:uppercase;font-weight:600;}
-  .board-head .sub{margin-left:auto;font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace;}
+  .dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;}
+  .board-head h2{
+    font-family:'Archivo', sans-serif;
+    font-size:13.5px;
+    margin:0;
+    letter-spacing:0.2px;
+    font-weight:700;
+    color:var(--ink);
+  }
+  .board-head .sub{margin-left:auto;font-size:10.5px;color:var(--muted-light);font-family:'IBM Plex Mono',monospace;}
 
-  table{width:100%;border-collapse:collapse;font-family:'IBM Plex Mono',monospace;}
-  td{padding:10px 16px;font-size:14px;border-top:1px solid rgba(255,255,255,0.04);}
+  table{width:100%;border-collapse:collapse;}
+  td{padding:11px 16px;font-size:14px;border-top:1px solid var(--border);}
   tr:first-child td{border-top:none;}
-  td.dest{color:var(--paper);}
+  td.dest{color:var(--ink);font-weight:500;}
   td.plat{color:var(--muted);font-size:12px;}
-  td.time{text-align:right;color:var(--amber);font-weight:600;font-size:15px;}
-  .status{padding:16px;color:var(--muted);font-size:13px;}
-  .status.err{color:var(--red);}
+  td.time{
+    text-align:right;
+    font-family:'IBM Plex Mono',monospace;
+    font-weight:700;
+    font-size:15px;
+    color:var(--ink);
+    white-space:nowrap;
+  }
+  .badge{
+    display:inline-block;
+    font-family:'Archivo', sans-serif;
+    font-weight:800;
+    font-size:10px;
+    letter-spacing:0.4px;
+    color:#fff;
+    padding:3px 7px;
+    border-radius:5px;
+    vertical-align:middle;
+    margin-right:7px;
+    white-space:nowrap;
+  }
+
+  .alert{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:#fdecea;
+    color:#7a1a10;
+    border-bottom:1px solid #f6c6c0;
+    padding:9px 16px;
+    font-size:12.5px;
+    font-weight:600;
+  }
+  .alert .icon{font-size:14px;}
+
+  .compare{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-bottom:20px;
+  }
+  @media (max-width:420px){
+    .compare{grid-template-columns:1fr;}
+  }
+  .compare-card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:15px 16px;
+    box-shadow:0 1px 2px rgba(17,21,28,0.04);
+  }
+  .compare-card.best{
+    border-color:var(--tfl-blue);
+    box-shadow:0 0 0 2px rgba(0,25,168,0.14);
+  }
+  .compare-card .ch{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    margin-bottom:9px;
+  }
+  .compare-card h3{
+    margin:0;
+    font-family:'Archivo', sans-serif;
+    font-size:12.5px;
+    font-weight:700;
+    letter-spacing:0.2px;
+    color:var(--ink);
+  }
+  .compare-card .pill{
+    margin-left:auto;
+    font-size:9.5px;
+    font-weight:700;
+    letter-spacing:0.4px;
+    text-transform:uppercase;
+    color:var(--tfl-blue);
+    background:#eaeeff;
+    padding:2px 7px;
+    border-radius:999px;
+  }
+  .compare-card .depart{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:22px;
+    font-weight:700;
+    color:var(--ink);
+    line-height:1.1;
+  }
+  .compare-card .depart small{
+    font-family:'Inter',sans-serif;
+    font-size:11px;
+    font-weight:500;
+    color:var(--muted);
+    margin-left:6px;
+  }
+  .compare-card .arrive{
+    font-size:12px;
+    color:var(--muted);
+    margin-top:6px;
+  }
+  .compare-card .arrive b{color:var(--ink);}
+  .compare-card .caution{
+    margin-top:8px;
+    font-size:11px;
+    color:var(--warn);
+    font-weight:600;
+  }
+
+  .status{padding:18px 16px;color:var(--muted);font-size:13px;}
+  .status.err{color:var(--rail-red);}
 
   footer{
     text-align:center;
-    font-size:11px;
-    color:var(--muted);
-    margin-top:8px;
+    font-size:9.5px;
+    color:var(--muted-light);
+    margin-top:10px;
+    opacity:0.75;
   }
 </style>
 </head>
@@ -135,19 +265,29 @@
 
   <header>
     <div>
-      <div class="place">Greenwich Station</div>
+      <div class="eyebrow">Greenwich Station</div>
       <h1>Off to <span>Bank</span></h1>
     </div>
     <div id="clock">--:--:--</div>
   </header>
 
   <div class="weather" id="weatherPanel">
-    <div class="temp" id="temp">--°C</div>
-    <div class="desc" id="weatherDesc">Loading weather…</div>
+    <div class="roundel" id="weatherIcon"></div>
+    <div>
+      <div class="temp" id="temp">--°C</div>
+      <div class="desc" id="weatherDesc">Loading weather…</div>
+    </div>
   </div>
 
-  <div class="banner" id="recommendation">
-    Working out the fastest way to Bank…
+  <div class="compare" id="recommendation">
+    <div class="compare-card" id="dlrCard">
+      <div class="ch"><h3>DLR via Cutty Sark</h3></div>
+      <div class="depart">Working out timing…</div>
+    </div>
+    <div class="compare-card" id="railCard">
+      <div class="ch"><h3>Train via Greenwich</h3></div>
+      <div class="depart">Working out timing…</div>
+    </div>
   </div>
 
   <div class="board">
@@ -156,19 +296,21 @@
       <h2>DLR · Cutty Sark → Bank</h2>
       <div class="sub" id="dlrUpdated">···</div>
     </div>
+    <div id="dlrAlert"></div>
     <div id="dlrBoard"><div class="status">Loading departures…</div></div>
   </div>
 
   <div class="board">
     <div class="board-head">
-      <div class="dot" style="background:var(--rail)"></div>
+      <div class="dot" style="background:var(--rail-blue)"></div>
       <h2>Southeastern / Thameslink · Greenwich → London Bridge</h2>
       <div class="sub" id="railUpdated">···</div>
     </div>
+    <div id="railAlert"></div>
     <div id="railBoard"><div class="status">Loading departures…</div></div>
   </div>
 
-  <footer>Weather via Open-Meteo · Departures via TfL Unified API · refreshes every 30s</footer>
+  <footer>Weather via Open-Meteo · Departures via TfL Unified API &amp; National Rail Darwin · refreshes every 30s</footer>
 </div>
 
 <script>
@@ -192,17 +334,58 @@ const weatherCodes = {
   95:'Thunderstorm',96:'Thunderstorm w/ hail',99:'Severe thunderstorm'
 };
 
+function weatherIconSvg(code, isNight){
+  const sun = '#e8a53d', cloud = '#8a94a3', cloudLight = '#aeb6c2', rain = '#2f6fb0', snow = '#7fa8c9', bolt = '#c75300', moon = '#5b6b8c';
+  const wrap = inner => `<svg width="52" height="52" viewBox="0 0 52 52" fill="none">${inner}</svg>`;
+
+  if(code === 0 || code === 1){
+    return isNight
+      ? wrap(`<path d="M33 10a15 15 0 1 0 9 21 12 12 0 0 1-9-21z" fill="${moon}"/>`)
+      : wrap(`<circle cx="26" cy="26" r="10" fill="${sun}"/>
+        <g stroke="${sun}" stroke-width="2.4" stroke-linecap="round">
+          <path d="M26 4v6M26 42v6M4 26h6M42 26h6M11 11l4.2 4.2M36.8 36.8L41 41M41 11l-4.2 4.2M15.2 36.8L11 41"/>
+        </g>`);
+  }
+  if(code === 2){
+    return wrap(`<circle cx="20" cy="21" r="8" fill="${sun}"/>
+      <path d="M15 34a9 9 0 0 1-1-17.9A11 11 0 0 1 35 20a8 8 0 0 1-1 16H15z" fill="${cloudLight}"/>`);
+  }
+  if(code === 3 || code === 45 || code === 48){
+    return wrap(`<path d="M14 34a9 9 0 0 1-1-17.9A11 11 0 0 1 34 20a8 8 0 0 1-1 16H14z" fill="${cloud}"/>`
+      + (code >= 45 ? `<g stroke="${cloudLight}" stroke-width="2.2" stroke-linecap="round"><path d="M12 41h28M16 46h20"/></g>` : ''));
+  }
+  if([51,53,55,61,63,65,66,67,80,81,82].includes(code)){
+    return wrap(`<path d="M14 30a9 9 0 0 1-1-17.9A11 11 0 0 1 34 16a8 8 0 0 1-1 16H14z" fill="${cloud}"/>
+      <g stroke="${rain}" stroke-width="2.4" stroke-linecap="round">
+        <path d="M17 36l-2 6M26 36l-2 6M35 36l-2 6"/>
+      </g>`);
+  }
+  if([71,73,75,77,85,86].includes(code)){
+    return wrap(`<path d="M14 28a9 9 0 0 1-1-17.9A11 11 0 0 1 34 14a8 8 0 0 1-1 16H14z" fill="${cloudLight}"/>
+      <g stroke="${snow}" stroke-width="2.4" stroke-linecap="round">
+        <path d="M18 36v8M18 38l-3 2M18 38l3 2M18 42l-3-2M18 42l3-2"/>
+        <path d="M32 36v8M32 38l-3 2M32 38l3 2M32 42l-3-2M32 42l3-2"/>
+      </g>`);
+  }
+  if([95,96,99].includes(code)){
+    return wrap(`<path d="M14 26a9 9 0 0 1-1-17.9A11 11 0 0 1 34 12a8 8 0 0 1-1 16H14z" fill="${cloud}"/>
+      <path d="M26 32l-6 9h6l-3 8 9-11h-6l3-6z" fill="${bolt}"/>`);
+  }
+  return wrap(`<path d="M14 32a9 9 0 0 1-1-17.9A11 11 0 0 1 34 18a8 8 0 0 1-1 16H14z" fill="${cloud}"/>`);
+}
+
 async function loadWeather(){
   try{
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${GREENWICH_LAT}&longitude=${GREENWICH_LON}&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,precipitation&timezone=Europe%2FLondon`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${GREENWICH_LAT}&longitude=${GREENWICH_LON}&current=temperature_2m,apparent_temperature,weather_code,is_day,wind_speed_10m,precipitation&timezone=Europe%2FLondon`;
     const res = await fetch(url);
     const data = await res.json();
     const c = data.current;
     const desc = weatherCodes[c.weather_code] || 'Unknown conditions';
+    document.getElementById('weatherIcon').innerHTML = weatherIconSvg(c.weather_code, c.is_day === 0);
     document.getElementById('temp').textContent = `${Math.round(c.temperature_2m)}°C`;
     document.getElementById('weatherDesc').innerHTML =
       `<b>${desc}</b><br>Feels like ${Math.round(c.apparent_temperature)}°C · Wind ${Math.round(c.wind_speed_10m)} km/h`
-      + (c.precipitation > 0 ? ' · <b style="color:var(--rail)">Rain now, take a brolly</b>' : '');
+      + (c.precipitation > 0 ? ' · <b style="color:var(--rail-blue)">Rain now, take a brolly</b>' : '');
   }catch(e){
     document.getElementById('weatherDesc').textContent = 'Could not load weather.';
   }
@@ -218,6 +401,16 @@ function fmtMins(sec){
   return m <= 0 ? 'Due' : `${m} min`;
 }
 
+function operatorBadge(name){
+  const map = {
+    'Southeastern': { bg:'#0a2a52', label:'SE' },
+    'Thameslink':   { bg:'#84144f', label:'TL' },
+    'DLR':          { bg:'var(--dlr)', label:'DLR' }
+  };
+  const m = map[name] || { bg:'#4a5560', label:(name||'??').slice(0,2).toUpperCase() };
+  return `<span class="badge" style="background:${m.bg}">${m.label}</span>`;
+}
+
 function renderBoard(el, arrivals, emptyMsg){
   if(!arrivals.length){
     el.innerHTML = `<div class="status">${emptyMsg}</div>`;
@@ -225,7 +418,7 @@ function renderBoard(el, arrivals, emptyMsg){
   }
   const rows = arrivals.slice(0,4).map(a => `
     <tr>
-      <td class="dest">${a.destinationName || a.towards || 'Unknown'}</td>
+      <td class="dest">${operatorBadge('DLR')}${a.destinationName || a.towards || 'Unknown'}</td>
       <td class="plat">${a.platformName ? 'Plat ' + a.platformName : ''}</td>
       <td class="time">${fmtMins(a.timeToStation)}</td>
     </tr>`).join('');
@@ -247,9 +440,35 @@ async function fetchDlrArrivals(){
   }
 }
 
+async function fetchDlrLineStatus(){
+  try{
+    const res = await fetch('https://api.tfl.gov.uk/Line/dlr/Status');
+    if(!res.ok) return null;
+    const data = await res.json();
+    const ls = data[0] && data[0].lineStatuses && data[0].lineStatuses[0];
+    return ls || null;
+  }catch(e){
+    return null;
+  }
+}
+
 // ---------- NATIONAL RAIL (Huxley2 / Darwin) ----------
+const RAIL_API_BASES = [
+  'https://huxley2.azurewebsites.net',
+  'https://onrails.azurewebsites.net'
+];
 const RAIL_FROM_CRS = 'GNW';   // Greenwich
 const RAIL_TO_CRS = 'LBG';     // London Bridge
+
+async function fetchWithTimeout(url, ms){
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ms);
+  try{
+    return await fetch(url, { signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
 function minsUntil(hhmm){
   if(!hhmm || !/^\d{2}:\d{2}$/.test(hhmm)) return null;
@@ -268,39 +487,62 @@ function renderRailBoard(el, services, emptyMsg){
   }
   const rows = services.slice(0,4).map(s => {
     const dest = (s.destination && s.destination[0] && s.destination[0].locationName) || 'Unknown';
-    const status = s.etd && s.etd !== 'On time' ? s.etd : 'On time';
+    const cancelled = s.isCancelled === true;
+    const status = cancelled ? 'Cancelled' : (s.etd && s.etd !== 'On time' ? s.etd : 'On time');
+    const statusColor = cancelled ? 'var(--rail-red)' : (status === 'On time' ? 'var(--good)' : 'var(--warn)');
     const mins = minsUntil(s.std);
-    const timeLabel = mins === null ? (s.std || '--:--') : (mins <= 0 ? 'Due' : `${mins} min`);
+    const timeLabel = cancelled ? 'Cancelled' : (mins === null ? (s.std || '--:--') : (mins <= 0 ? 'Due' : `${mins} min`));
     return `
     <tr>
-      <td class="dest">${dest}<br><span class="plat" style="font-size:11px;">${s.operator || ''} · ${status}</span></td>
+      <td class="dest">${operatorBadge(s.operator)}${dest}<br><span class="plat" style="font-size:11px;margin-left:0;">Std ${s.std || '--:--'} · <span style="color:${statusColor};font-weight:700;">${status}</span></span></td>
       <td class="plat">${s.platform ? 'Plat ' + s.platform : ''}</td>
-      <td class="time">${timeLabel}</td>
+      <td class="time" style="${cancelled ? 'color:var(--rail-red);' : ''}">${timeLabel}</td>
     </tr>`;
   }).join('');
   el.innerHTML = `<table>${rows}</table>`;
-}
 
-async function fetchRailDepartures(){
-  try{
-    const res = await fetch(`https://huxley2.azurewebsites.net/departures/${RAIL_FROM_CRS}/to/${RAIL_TO_CRS}/4`);
-    if(!res.ok){
-      const body = await res.text();
-      return { ok:false, data:[], error:`Huxley returned ${res.status}: ${body.slice(0,150)}` };
-    }
-    const data = await res.json();
-    const services = data.trainServices || [];
-    return { ok:true, data:services, error: services.length ? null : 'No Southeastern/Thameslink services returned right now.' };
-  }catch(e){
-    return { ok:false, data:[], error:`Network error fetching rail: ${e.message}` };
+  const alertEl = document.getElementById('railAlert');
+  const disrupted = services.filter(s => s.isCancelled || (s.etd && s.etd !== 'On time'));
+  if(disrupted.length){
+    alertEl.innerHTML = `<div class="alert"><span class="icon">⚠</span> ${disrupted.length} of your next ${services.length} trains ${disrupted.length===1?'is':'are'} delayed or cancelled - check platform boards before you travel.</div>`;
+  } else {
+    alertEl.innerHTML = '';
   }
 }
 
+async function fetchRailDepartures(){
+  const errors = [];
+  for(const base of RAIL_API_BASES){
+    try{
+      const res = await fetchWithTimeout(`${base}/departures/${RAIL_FROM_CRS}/to/${RAIL_TO_CRS}/4`, 6000);
+      if(!res.ok){
+        const body = await res.text();
+        errors.push(`${base} returned ${res.status}: ${body.slice(0,100)}`);
+        continue;
+      }
+      const data = await res.json();
+      const services = data.trainServices || [];
+      return { ok:true, data:services, error: services.length ? null : 'No Southeastern/Thameslink services returned right now.' };
+    }catch(e){
+      errors.push(`${base}: ${e.name === 'AbortError' ? 'timed out' : e.message}`);
+    }
+  }
+  return { ok:false, data:[], error:`All rail sources failed - ${errors.join(' | ')}` };
+}
+
 async function loadDepartures(){
-  const [dlrResult, railResult] = await Promise.all([
+  const [dlrResult, railResult, dlrStatus] = await Promise.all([
     fetchDlrArrivals(),
-    fetchRailDepartures()
+    fetchRailDepartures(),
+    fetchDlrLineStatus()
   ]);
+
+  const dlrAlertEl = document.getElementById('dlrAlert');
+  if(dlrStatus && dlrStatus.statusSeverityDescription && dlrStatus.statusSeverityDescription !== 'Good Service'){
+    dlrAlertEl.innerHTML = `<div class="alert"><span class="icon">⚠</span> DLR: ${dlrStatus.statusSeverityDescription}${dlrStatus.reason ? ' - ' + dlrStatus.reason.replace(/^DLR:\s*/,'') : ''}</div>`;
+  } else {
+    dlrAlertEl.innerHTML = '';
+  }
 
   let dlrArr = dlrResult.data
     .filter(a => a.direction === 'inbound')   // inbound = towards Bank/Tower Gateway from Cutty Sark
@@ -320,24 +562,81 @@ async function loadDepartures(){
   document.getElementById('dlrUpdated').textContent = (dlrResult.ok ? 'updated ' : 'error · ') + stamp;
   document.getElementById('railUpdated').textContent = (railResult.ok ? 'updated ' : 'error · ') + stamp;
 
-  const rec = document.getElementById('recommendation');
-  const railFirstMins = railArr.length ? (minsUntil(railArr[0].std) ?? 0) : null;
-  if(dlrArr.length && railArr.length){
-    const dlrEta = dlrArr[0].timeToStation/60 + 23;
-    const railEta = railFirstMins + 8 + 10;
-    if(dlrEta <= railEta){
-      rec.innerHTML = `<b>Take the DLR</b> - next one in ${fmtMins(dlrArr[0].timeToStation)}, roughly ${Math.round(dlrEta)} min door to Bank.
-        <span class="note">Rail option today: about ${Math.round(railEta)} min via London Bridge.</span>`;
-    } else {
-      rec.innerHTML = `<b>Take the train to London Bridge</b>, next one in ${railFirstMins} min, roughly ${Math.round(railEta)} min door to Bank.
-        <span class="note">DLR option today: about ${Math.round(dlrEta)} min direct.</span>`;
+  // Fixed (non-wait) segments, from real measured journey times:
+  // DLR: walk home->Cutty Sark (8) + DLR ride (21) + walk Bank->office (4)
+  const DLR_FIXED_MIN = 8 + 21 + 4;   // 33
+  // Rail: walk home->Greenwich (13) + ride to London Bridge (9) + walk London Bridge->office (7)
+  // (alighting at London Bridge beats riding on to Cannon Street: 9+7=16 vs 13+9=22)
+  const RAIL_FIXED_MIN = 13 + 9 + 7;  // 29
+  const GETREADY_MIN = 5; // time needed before you can walk out the door
+
+  function fmtClock(d){
+    return d.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit', hour12:false });
+  }
+
+  // Pick the first departure that's actually reachable given GETREADY_MIN.
+  // waitMinsList: array of minutes-from-now for each upcoming departure, in order.
+  function pickReachable(waitMinsList){
+    for(const w of waitMinsList){
+      if(w >= GETREADY_MIN) return { waitMin:w, tooTight:false };
     }
-  } else if(dlrArr.length){
-    rec.innerHTML = `<b>DLR is your best bet</b> - next one in ${fmtMins(dlrArr[0].timeToStation)}. Rail board has nothing right now.`;
-  } else if(railArr.length){
-    rec.innerHTML = `<b>Train to London Bridge is your best bet</b> - next one in ${railFirstMins} min. DLR board has nothing right now.`;
-  } else {
-    rec.innerHTML = `Couldn't get live departures for either.<span class="note">${dlrResult.error || ''} ${railResult.error || ''}</span>`;
+    // Nothing comfortably reachable - fall back to the last one we have, flagged as tight.
+    if(waitMinsList.length) return { waitMin:waitMinsList[waitMinsList.length-1], tooTight:true };
+    return null;
+  }
+
+  function renderCard(cardId, ok, waitMinsList, fixedMin, emptyMsg){
+    const card = document.getElementById(cardId);
+    if(!ok || !waitMinsList.length){
+      card.querySelector('.depart').innerHTML = emptyMsg;
+      const oldArrive = card.querySelector('.arrive'); if(oldArrive) oldArrive.remove();
+      const oldCaution = card.querySelector('.caution'); if(oldCaution) oldCaution.remove();
+      return null;
+    }
+    const pick = pickReachable(waitMinsList);
+    const now = new Date();
+    const departClock = new Date(now.getTime() + pick.waitMin * 60000);
+    const arriveClock = new Date(now.getTime() + (pick.waitMin + fixedMin) * 60000);
+    const totalMin = Math.round(pick.waitMin + fixedMin);
+
+    card.querySelector('.depart').innerHTML =
+      `${fmtClock(departClock)}<small>next departure${pick.waitMin <= 0 ? ', due now' : ` · in ${Math.round(pick.waitMin)} min`}</small>`;
+
+    let arriveEl = card.querySelector('.arrive');
+    if(!arriveEl){ arriveEl = document.createElement('div'); arriveEl.className = 'arrive'; card.appendChild(arriveEl); }
+    arriveEl.innerHTML = `Arrive desk ~<b>${fmtClock(arriveClock)}</b> <span style="color:var(--muted-light)">(${totalMin} min door to door)</span>`;
+
+    let cautionEl = card.querySelector('.caution');
+    if(pick.tooTight){
+      if(!cautionEl){ cautionEl = document.createElement('div'); cautionEl.className = 'caution'; card.appendChild(cautionEl); }
+      cautionEl.textContent = `Cutting it close - less than ${GETREADY_MIN} min to get ready for this one.`;
+    } else if(cautionEl){
+      cautionEl.remove();
+    }
+    return totalMin;
+  }
+
+  const dlrWaits = dlrArr.map(a => a.timeToStation / 60);
+  const railWaits = railArr.map(s => minsUntil(s.std)).filter(m => m !== null);
+
+  const dlrTotal = renderCard('dlrCard', dlrResult.ok, dlrWaits, DLR_FIXED_MIN,
+    dlrResult.error || 'No DLR departures right now.');
+  const railTotal = renderCard('railCard', railResult.ok, railWaits, RAIL_FIXED_MIN,
+    railResult.error || 'No rail departures right now.');
+
+  // Highlight whichever is genuinely faster once both are known.
+  document.getElementById('dlrCard').classList.remove('best');
+  document.getElementById('railCard').classList.remove('best');
+  if(dlrTotal !== null && railTotal !== null){
+    const winner = dlrTotal <= railTotal ? 'dlrCard' : 'railCard';
+    document.getElementById(winner).classList.add('best');
+    document.querySelector(`#${winner} h3`).parentElement.querySelector('.pill')?.remove();
+    const pill = document.createElement('span');
+    pill.className = 'pill';
+    pill.textContent = 'Faster';
+    document.querySelector(`#${winner} .ch`).appendChild(pill);
+    const loserId = winner === 'dlrCard' ? 'railCard' : 'dlrCard';
+    document.querySelector(`#${loserId} .pill`)?.remove();
   }
 }
 
