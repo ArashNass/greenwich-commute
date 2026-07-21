@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Greenwich → Work</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+
+  :root{
+    --bg:#14181b;
+    --panel:#1c2227;
+    --panel-edge:#2a3238;
+    --amber:#ffb200;
+    --amber-dim:#8a6103;
+    --dlr:#00b3b0;
+    --rail:#7ac74f;
+    --paper:#e9e6dc;
+    --muted:#7d8790;
+    --red:#e2543f;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    background-image:
+      radial-gradient(ellipse at top left, rgba(255,178,0,0.05), transparent 55%),
+      repeating-linear-gradient(180deg, rgba(255,255,255,0.012) 0px, rgba(255,255,255,0.012) 1px, transparent 1px, transparent 3px);
+    color:var(--paper);
+    font-family:'IBM Plex Sans', sans-serif;
+    padding:22px 16px 40px;
+  }
+  .wrap{max-width:720px;margin:0 auto;}
+
+  header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    border-bottom:2px solid var(--panel-edge);
+    padding-bottom:14px;
+    margin-bottom:18px;
+  }
+  header .place{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:3px;
+    color:var(--muted);
+    text-transform:uppercase;
+  }
+  header h1{
+    margin:2px 0 0;
+    font-size:26px;
+    font-weight:600;
+    letter-spacing:0.5px;
+  }
+  header h1 span{color:var(--amber);}
+  #clock{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:22px;
+    color:var(--amber);
+    letter-spacing:1px;
+  }
+
+  .weather{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    background:var(--panel);
+    border:1px solid var(--panel-edge);
+    border-radius:10px;
+    padding:14px 18px;
+    margin-bottom:20px;
+  }
+  .weather .temp{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:34px;
+    font-weight:600;
+    color:var(--paper);
+  }
+  .weather .desc{
+    font-size:13px;
+    color:var(--muted);
+    line-height:1.5;
+  }
+  .weather .desc b{color:var(--paper);font-weight:500;}
+
+  .banner{
+    background:linear-gradient(90deg, rgba(255,178,0,0.12), rgba(255,178,0,0.02));
+    border:1px solid var(--amber-dim);
+    border-left:4px solid var(--amber);
+    border-radius:6px;
+    padding:12px 16px;
+    margin-bottom:22px;
+    font-size:14px;
+  }
+  .banner b{color:var(--amber);}
+  .banner .note{display:block;color:var(--muted);font-size:11.5px;margin-top:4px;}
+
+  .board{
+    background:var(--panel);
+    border:1px solid var(--panel-edge);
+    border-radius:10px;
+    margin-bottom:18px;
+    overflow:hidden;
+  }
+  .board-head{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:12px 16px;
+    border-bottom:1px solid var(--panel-edge);
+  }
+  .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+  .board-head h2{font-size:14px;margin:0;letter-spacing:1px;text-transform:uppercase;font-weight:600;}
+  .board-head .sub{margin-left:auto;font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace;}
+
+  table{width:100%;border-collapse:collapse;font-family:'IBM Plex Mono',monospace;}
+  td{padding:10px 16px;font-size:14px;border-top:1px solid rgba(255,255,255,0.04);}
+  tr:first-child td{border-top:none;}
+  td.dest{color:var(--paper);}
+  td.plat{color:var(--muted);font-size:12px;}
+  td.time{text-align:right;color:var(--amber);font-weight:600;font-size:15px;}
+  .status{padding:16px;color:var(--muted);font-size:13px;}
+  .status.err{color:var(--red);}
+
+  footer{
+    text-align:center;
+    font-size:11px;
+    color:var(--muted);
+    margin-top:8px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <div class="place">Greenwich Station</div>
+      <h1>Off to <span>Bank</span></h1>
+    </div>
+    <div id="clock">--:--:--</div>
+  </header>
+
+  <div class="weather" id="weatherPanel">
+    <div class="temp" id="temp">--°C</div>
+    <div class="desc" id="weatherDesc">Loading weather…</div>
+  </div>
+
+  <div class="banner" id="recommendation">
+    Working out the fastest way to Bank…
+  </div>
+
+  <div class="board">
+    <div class="board-head">
+      <div class="dot" style="background:var(--dlr)"></div>
+      <h2>DLR · Cutty Sark → Bank</h2>
+      <div class="sub" id="dlrUpdated">···</div>
+    </div>
+    <div id="dlrBoard"><div class="status">Loading departures…</div></div>
+  </div>
+
+  <div class="board">
+    <div class="board-head">
+      <div class="dot" style="background:var(--rail)"></div>
+      <h2>Southeastern / Thameslink · Greenwich → London Bridge</h2>
+      <div class="sub" id="railUpdated">···</div>
+    </div>
+    <div id="railBoard"><div class="status">Loading departures…</div></div>
+  </div>
+
+  <footer>Weather via Open-Meteo · Departures via TfL Unified API · refreshes every 30s</footer>
+</div>
+
+<script>
+const GREENWICH_LAT = 51.4826, GREENWICH_LON = -0.0077;
+
+// live clock
+function tickClock(){
+  document.getElementById('clock').textContent =
+    new Date().toLocaleTimeString('en-GB', { hour12:false });
+}
+setInterval(tickClock, 1000); tickClock();
+
+// ---------- WEATHER ----------
+const weatherCodes = {
+  0:'Clear sky',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',
+  45:'Fog',48:'Freezing fog',51:'Light drizzle',53:'Drizzle',55:'Heavy drizzle',
+  61:'Light rain',63:'Rain',65:'Heavy rain',66:'Freezing rain',67:'Heavy freezing rain',
+  71:'Light snow',73:'Snow',75:'Heavy snow',77:'Snow grains',
+  80:'Light showers',81:'Showers',82:'Violent showers',
+  85:'Snow showers',86:'Heavy snow showers',
+  95:'Thunderstorm',96:'Thunderstorm w/ hail',99:'Severe thunderstorm'
+};
+
+async function loadWeather(){
+  try{
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${GREENWICH_LAT}&longitude=${GREENWICH_LON}&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,precipitation&timezone=Europe%2FLondon`;
+    const res = await fetch(url);
+    const data = await res.json();
+    const c = data.current;
+    const desc = weatherCodes[c.weather_code] || 'Unknown conditions';
+    document.getElementById('temp').textContent = `${Math.round(c.temperature_2m)}°C`;
+    document.getElementById('weatherDesc').innerHTML =
+      `<b>${desc}</b><br>Feels like ${Math.round(c.apparent_temperature)}°C · Wind ${Math.round(c.wind_speed_10m)} km/h`
+      + (c.precipitation > 0 ? ' · <b style="color:var(--rail)">Rain now, take a brolly</b>' : '');
+  }catch(e){
+    document.getElementById('weatherDesc').textContent = 'Could not load weather.';
+  }
+}
+
+// ---------- TFL DEPARTURES ----------
+// Known-good StopPoint id as a reliable fallback (verified against TfL data).
+const DLR_FALLBACK_ID = '940GZZDLCUT';   // Cutty Sark for Maritime Greenwich DLR station
+let dlrStopId = null, railStopId = null;
+
+async function resolveStops(){
+  // DLR: Cutty Sark station specifically
+  try{
+    const res = await fetch('https://api.tfl.gov.uk/StopPoint/Search/Cutty%20Sark?modes=dlr');
+    if(!res.ok) throw new Error('search http ' + res.status);
+    const data = await res.json();
+    const match = (data.matches || []).find(m => m.modes && m.modes.includes('dlr'));
+    dlrStopId = match ? match.id : DLR_FALLBACK_ID;
+  }catch(e){
+    console.warn('DLR stop search failed, using fallback id:', e);
+    dlrStopId = DLR_FALLBACK_ID;
+  }
+
+  // National Rail: Greenwich station
+  try{
+    const res = await fetch('https://api.tfl.gov.uk/StopPoint/Search/Greenwich?modes=national-rail');
+    if(!res.ok) throw new Error('search http ' + res.status);
+    const data = await res.json();
+    const matches = (data.matches || []).filter(m => m.modes && m.modes.includes('national-rail'));
+    const exact = matches.find(m => /^Greenwich( Rail Station)?$/i.test(m.name || ''));
+    railStopId = (exact || matches[0] || {}).id || null;
+  }catch(e){
+    console.warn('Rail stop search failed:', e);
+    railStopId = null;
+  }
+}
+
+function fmtMins(sec){
+  const m = Math.round(sec/60);
+  return m <= 0 ? 'Due' : `${m} min`;
+}
+
+function renderBoard(el, arrivals, emptyMsg){
+  if(!arrivals.length){
+    el.innerHTML = `<div class="status">${emptyMsg}</div>`;
+    return;
+  }
+  const rows = arrivals.slice(0,4).map(a => `
+    <tr>
+      <td class="dest">${a.destinationName || a.towards || 'Unknown'}${a.operatorName ? `<br><span class="plat" style="font-size:11px;">${a.operatorName}</span>` : ''}</td>
+      <td class="plat">${a.platformName ? 'Plat ' + a.platformName : ''}</td>
+      <td class="time">${fmtMins(a.timeToStation)}</td>
+    </tr>`).join('');
+  el.innerHTML = `<table>${rows}</table>`;
+}
+
+// Fetch arrivals for a given stop id, returning { ok, data, error }
+async function fetchArrivals(stopId, label){
+  if(!stopId) return { ok:false, data:[], error:`Could not find a station id for ${label}.` };
+  try{
+    const res = await fetch(`https://api.tfl.gov.uk/StopPoint/${stopId}/Arrivals`);
+    if(!res.ok){
+      const body = await res.text();
+      return { ok:false, data:[], error:`TfL API returned ${res.status} for ${label}: ${body.slice(0,150)}` };
+    }
+    const data = await res.json();
+    if(!Array.isArray(data)) return { ok:false, data:[], error:`Unexpected response shape for ${label}.` };
+    return { ok:true, data, error:null };
+  }catch(e){
+    return { ok:false, data:[], error:`Network/CORS error fetching ${label}: ${e.message}` };
+  }
+}
+
+async function loadDepartures(){
+  if(!dlrStopId || !railStopId) await resolveStops();
+
+  const [dlrResult, railResult] = await Promise.all([
+    fetchArrivals(dlrStopId, 'DLR (Cutty Sark)'),
+    fetchArrivals(railStopId, 'National Rail (Greenwich)')
+  ]);
+
+  let dlrArr = dlrResult.data.sort((a,b) => a.timeToStation - b.timeToStation);
+  let railArr = railResult.data.sort((a,b) => a.timeToStation - b.timeToStation);
+
+  renderBoard(
+    document.getElementById('dlrBoard'), dlrArr,
+    dlrResult.error || 'No DLR departures returned right now.'
+  );
+  renderBoard(
+    document.getElementById('railBoard'), railArr,
+    railResult.error || 'No rail departures returned right now.'
+  );
+
+  const stamp = new Date().toLocaleTimeString('en-GB',{hour12:false});
+  document.getElementById('dlrUpdated').textContent = (dlrResult.ok ? 'updated ' : 'error · ') + stamp;
+  document.getElementById('railUpdated').textContent = (railResult.ok ? 'updated ' : 'error · ') + stamp;
+
+  const rec = document.getElementById('recommendation');
+  if(dlrArr.length && railArr.length){
+    const dlrEta = dlrArr[0].timeToStation/60 + 23;
+    const railEta = railArr[0].timeToStation/60 + 8 + 10;
+    if(dlrEta <= railEta){
+      rec.innerHTML = `<b>Take the DLR</b> - next one in ${fmtMins(dlrArr[0].timeToStation)}, roughly ${Math.round(dlrEta)} min door to Bank.
+        <span class="note">Rail option today: about ${Math.round(railEta)} min via London Bridge.</span>`;
+    } else {
+      rec.innerHTML = `<b>Take the train to London Bridge</b>, next one in ${fmtMins(railArr[0].timeToStation)}, roughly ${Math.round(railEta)} min door to Bank.
+        <span class="note">DLR option today: about ${Math.round(dlrEta)} min direct.</span>`;
+    }
+  } else if(dlrArr.length){
+    rec.innerHTML = `<b>DLR is your best bet</b> - next one in ${fmtMins(dlrArr[0].timeToStation)}. Rail board has nothing right now.`;
+  } else if(railArr.length){
+    rec.innerHTML = `<b>Train to London Bridge is your best bet</b> - next one in ${fmtMins(railArr[0].timeToStation)}. DLR board has nothing right now.`;
+  } else {
+    rec.innerHTML = `Couldn't get live departures for either.<span class="note">${dlrResult.error || ''} ${railResult.error || ''}</span>`;
+  }
+}
+
+loadWeather();
+loadDepartures();
+setInterval(loadWeather, 10 * 60 * 1000);
+setInterval(loadDepartures, 30 * 1000);
+</script>
+</body>
+</html>
