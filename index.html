@@ -185,6 +185,39 @@
   @media (max-width:420px){
     .compare{grid-template-columns:1fr;}
   }
+  .qbox{
+    background:#12161c;
+    border:1px solid #262d36;
+    border-radius:14px;
+    padding:16px 18px;
+    box-shadow:0 1px 2px rgba(17,21,28,0.08);
+  }
+  .qbox .qlabel{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:1.6px;
+    color:#7c8794;
+    margin-bottom:8px;
+  }
+  .qbox .qbig{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:40px;
+    font-weight:700;
+    color:#ffb200;
+    line-height:1;
+    letter-spacing:1px;
+    text-shadow:0 0 14px rgba(255,178,0,0.35);
+  }
+  .qbox .qsub{
+    font-size:11.5px;
+    color:#9aa3ad;
+    margin-top:9px;
+    font-family:'IBM Plex Mono',monospace;
+    border-top:1px solid #262d36;
+    padding-top:8px;
+  }
   .compare-card{
     background:var(--panel);
     border:1px solid var(--border);
@@ -284,13 +317,26 @@
     </div>
   </div>
 
+  <div class="compare">
+    <div class="qbox" id="dlrCountdownBox">
+      <div class="qlabel">Next DLR</div>
+      <div class="qbig" id="dlrCountdown">--</div>
+      <div class="qsub" id="dlrCountdownDest">Loading…</div>
+    </div>
+    <div class="qbox" id="railCountdownBox">
+      <div class="qlabel">Next Train</div>
+      <div class="qbig" id="railCountdown">--</div>
+      <div class="qsub" id="railCountdownDest">Loading…</div>
+    </div>
+  </div>
+
   <div class="compare" id="recommendation">
     <div class="compare-card" id="dlrCard">
-      <div class="ch"><h3>DLR via Cutty Sark</h3></div>
+      <div class="ch"><h3>Realistic DLR plan</h3></div>
       <div class="depart">Working out timing…</div>
     </div>
     <div class="compare-card" id="railCard">
-      <div class="ch"><h3>Train via Greenwich</h3></div>
+      <div class="ch"><h3>Realistic train plan</h3></div>
       <div class="depart">Working out timing…</div>
     </div>
   </div>
@@ -311,7 +357,6 @@
       <h2>Southeastern / Thameslink · Greenwich → London Bridge</h2>
       <div class="sub" id="railUpdated">···</div>
     </div>
-    <div id="railAlert"></div>
     <div id="railBoard"><div class="status">Loading departures…</div></div>
   </div>
 
@@ -505,14 +550,6 @@ function renderRailBoard(el, services, emptyMsg){
     </tr>`;
   }).join('');
   el.innerHTML = `<table>${rows}</table>`;
-
-  const alertEl = document.getElementById('railAlert');
-  const disrupted = services.filter(s => s.isCancelled || (s.etd && s.etd !== 'On time'));
-  if(disrupted.length){
-    alertEl.innerHTML = `<div class="alert"><span class="icon">⚠</span> ${disrupted.length} of your next ${services.length} trains ${disrupted.length===1?'is':'are'} delayed or cancelled - check platform boards before you travel.</div>`;
-  } else {
-    alertEl.innerHTML = '';
-  }
 }
 
 async function fetchRailDepartures(){
@@ -535,6 +572,25 @@ async function fetchRailDepartures(){
   return { ok:false, data:[], error:`All rail sources failed - ${errors.join(' | ')}` };
 }
 
+// ---------- LIVE COUNTDOWN TICKERS ----------
+let dlrNextTarget = null;
+let railNextTarget = null;
+
+function fmtCountdown(target){
+  if(!target) return '--';
+  const diffSec = Math.max(0, (target - new Date()) / 1000);
+  if(diffSec <= 0) return 'Due';
+  const diffMin = diffSec / 60;
+  const rounded = Math.round(diffMin * 2) / 2; // nearest half minute
+  return `${rounded} min`;
+}
+
+function tickCountdowns(){
+  document.getElementById('dlrCountdown').textContent = fmtCountdown(dlrNextTarget);
+  document.getElementById('railCountdown').textContent = fmtCountdown(railNextTarget);
+}
+setInterval(tickCountdowns, 30 * 1000);
+
 async function loadDepartures(){
   const [dlrResult, railResult, dlrStatus] = await Promise.all([
     fetchDlrArrivals(),
@@ -552,7 +608,8 @@ async function loadDepartures(){
   let dlrArr = dlrResult.data
     .filter(a => a.direction === 'inbound')   // inbound = towards Bank/Tower Gateway from Cutty Sark
     .sort((a,b) => a.timeToStation - b.timeToStation);
-  let railArr = railResult.data; // Huxley already returns them in departure order
+  let railArr = railResult.data; // full list, including cancelled - shown as-is on the board
+  let railCatchable = railArr.filter(s => s.isCancelled !== true); // never pick a cancelled train as "next"
 
   renderBoard(
     document.getElementById('dlrBoard'), dlrArr,
@@ -562,6 +619,30 @@ async function loadDepartures(){
     document.getElementById('railBoard'), railArr,
     railResult.error || 'No rail departures returned right now.'
   );
+
+  // Literal "next departure" countdowns - no reachability filtering, just the raw soonest one.
+  if(dlrArr.length){
+    dlrNextTarget = new Date(Date.now() + dlrArr[0].timeToStation * 1000);
+    document.getElementById('dlrCountdownDest').textContent =
+      `${dlrArr[0].destinationName || 'Bank'}${dlrArr[0].platformName ? ' · Plat ' + dlrArr[0].platformName : ''}`;
+  } else {
+    dlrNextTarget = null;
+    document.getElementById('dlrCountdownDest').textContent = dlrResult.error || 'No departures right now.';
+    document.getElementById('dlrCountdown').textContent = '--';
+  }
+
+  if(railCatchable.length){
+    const railWaitSec = (minsUntil(railCatchable[0].std) ?? 0) * 60;
+    railNextTarget = new Date(Date.now() + railWaitSec * 1000);
+    const destName = (railCatchable[0].destination && railCatchable[0].destination[0] && railCatchable[0].destination[0].locationName) || 'London Bridge';
+    document.getElementById('railCountdownDest').textContent =
+      `${destName} · ${railCatchable[0].operator || ''}${railCatchable[0].platform ? ' · Plat ' + railCatchable[0].platform : ''}`;
+  } else {
+    railNextTarget = null;
+    document.getElementById('railCountdownDest').textContent = railResult.error || 'No non-cancelled departures right now.';
+    document.getElementById('railCountdown').textContent = '--';
+  }
+  tickCountdowns();
 
   const stamp = new Date().toLocaleTimeString('en-GB',{hour12:false});
   document.getElementById('dlrUpdated').textContent = (dlrResult.ok ? 'updated ' : 'error · ') + stamp;
@@ -584,30 +665,37 @@ async function loadDepartures(){
     return d.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit', hour12:false });
   }
 
-  // Pick the first departure you can actually make: you need GETREADY_MIN to
-  // leave the house, PLUS the walk time to that specific station. A train
-  // leaving in 3 min is useless if the walk there alone takes 13 min.
-  function pickReachable(items, minWaitMin){
+  // Only truly skip a departure if it's physically impossible (you can't
+  // walk there before it leaves). Otherwise, always show the real departure,
+  // and tell the person honestly how much slack they have to get ready.
+  function pickReachable(items, walkToStationMin){
     for(const item of items){
-      if(item.wait >= minWaitMin) return { ...item, tooTight:false };
+      if(item.wait >= walkToStationMin) return { ...item, slackMin: item.wait - walkToStationMin };
     }
-    if(items.length) return { ...items[items.length-1], tooTight:true };
-    return null;
+    return null; // genuinely nothing catchable in the live window
   }
 
-  function renderCard(cardId, ok, items, fixedMin, minWaitMin, segmentsText, emptyMsg){
+  function renderCard(cardId, ok, items, fixedMin, walkToStationMin, segmentsText, emptyMsg){
     const card = document.getElementById(cardId);
+    const clearExtras = () => {
+      ['.arrive','.caution','.segments'].forEach(sel => card.querySelector(sel)?.remove());
+    };
     if(!ok || !items.length){
       card.querySelector('.depart').innerHTML = emptyMsg;
-      const oldArrive = card.querySelector('.arrive'); if(oldArrive) oldArrive.remove();
-      const oldCaution = card.querySelector('.caution'); if(oldCaution) oldCaution.remove();
-      const oldSeg = card.querySelector('.segments'); if(oldSeg) oldSeg.remove();
+      clearExtras();
       return null;
     }
-    const pick = pickReachable(items, minWaitMin);
+    const pick = pickReachable(items, walkToStationMin);
+    if(!pick){
+      card.querySelector('.depart').innerHTML = `No catchable departure right now - the soonest live train is closer than the ${walkToStationMin} min walk there.`;
+      clearExtras();
+      return null;
+    }
+
     const now = new Date();
     const departClock = new Date(now.getTime() + pick.wait * 60000);
     const arriveClock = new Date(now.getTime() + (pick.wait + fixedMin) * 60000);
+    const leaveByClock = new Date(now.getTime() + pick.slackMin * 60000);
     const totalMin = Math.round(pick.wait + fixedMin);
 
     card.querySelector('.depart').innerHTML =
@@ -622,9 +710,11 @@ async function loadDepartures(){
     segEl.textContent = segmentsText;
 
     let cautionEl = card.querySelector('.caution');
-    if(pick.tooTight){
+    if(pick.slackMin < GETREADY_MIN){
       if(!cautionEl){ cautionEl = document.createElement('div'); cautionEl.className = 'caution'; card.appendChild(cautionEl); }
-      cautionEl.textContent = `None of the live departures leave enough time to walk there + get ready (need ${minWaitMin} min) - showing the soonest anyway, but you'll be cutting it fine.`;
+      cautionEl.textContent = pick.slackMin <= 0
+        ? `Leave right now - you're already cutting it fine for this one.`
+        : `Leave by ${fmtClock(leaveByClock)} (just ${Math.round(pick.slackMin)} min from now) to make it.`;
     } else if(cautionEl){
       cautionEl.remove();
     }
@@ -632,13 +722,13 @@ async function loadDepartures(){
   }
 
   const dlrItems = dlrArr.map(a => ({ wait: a.timeToStation / 60 }));
-  const railItems = railArr.map(s => ({ wait: minsUntil(s.std), operator: s.operator })).filter(i => i.wait !== null);
+  const railItems = railCatchable.map(s => ({ wait: minsUntil(s.std), operator: s.operator })).filter(i => i.wait !== null);
 
   const dlrResultCard = renderCard('dlrCard', dlrResult.ok, dlrItems, DLR_FIXED_MIN,
-    GETREADY_MIN + DLR_WALK_TO_STATION,
+    DLR_WALK_TO_STATION,
     `8 min walk + 21 min DLR + 4 min walk`, dlrResult.error || 'No DLR departures right now.');
   const railResultCard = renderCard('railCard', railResult.ok, railItems, RAIL_FIXED_MIN,
-    GETREADY_MIN + RAIL_WALK_TO_STATION,
+    RAIL_WALK_TO_STATION,
     `13 min walk + 9 min train + 7 min walk`, railResult.error || 'No rail departures right now.');
 
   // Reset any previous highlight
