@@ -21,7 +21,222 @@
     --rail-red:#e32017;      /* National Rail double-arrow red */
     --good:#027a3a;          /* service good / on time */
     --warn:#c75300;          /* delays */
+    --boat:#a6192e;          /* Thames Clippers / Uber Boat red */
   }
+
+  [data-theme="dark"]{
+    --bg:#0e1116;
+    --panel:#181d24;
+    --border:#2a323b;
+    --ink:#eef1f5;
+    --muted:#9aa3ad;
+    --muted-light:#5f6870;
+
+    --tfl-blue:#5a8bff;
+    --dlr:#2fd8d4;
+    --rail-blue:#6f9dff;
+    --rail-red:#ff6a5a;
+    --good:#3ddc84;
+    --warn:#ffb648;
+    --boat:#ff6b7f;
+  }
+
+  [data-theme="matrix"]{
+    --bg:#000000;
+    --panel:#040f07;
+    --border:#0f4d22;
+    --ink:#00ff41;
+    --muted:#00b32c;
+    --muted-light:#0a7a24;
+
+    --tfl-blue:#00ff41;
+    --dlr:#39ff8a;
+    --rail-blue:#00d94f;
+    --rail-red:#ff3b5c;
+    --good:#00ff41;
+    --warn:#ccff00;
+    --boat:#00ffc3;
+  }
+  [data-theme="matrix"] body,
+  [data-theme="matrix"] .qbig,
+  [data-theme="matrix"] .depart,
+  [data-theme="matrix"] h1,
+  [data-theme="matrix"] h2,
+  [data-theme="matrix"] h3{
+    font-family:'IBM Plex Mono', monospace !important;
+  }
+  [data-theme="matrix"] .panel-note,
+  [data-theme="matrix"] .weather,
+  [data-theme="matrix"] .board,
+  [data-theme="matrix"] .compare-card,
+  [data-theme="matrix"] .qbox{
+    text-shadow:0 0 6px rgba(0,255,65,0.35);
+  }
+
+  [data-theme="barbie"]{
+    --bg:#ffe3f1;
+    --panel:#ffffff;
+    --border:#ff9ecf;
+    --ink:#7a0050;
+    --muted:#c4508f;
+    --muted-light:#ff9ecf;
+
+    --tfl-blue:#e6007e;      /* Barbie pink */
+    --dlr:#ff5cad;
+    --rail-blue:#a4006b;
+    --rail-red:#ff2d78;
+    --good:#00b389;
+    --warn:#ff8a00;
+    --boat:#c400a0;
+  }
+  [data-theme="barbie"] body{
+    background:radial-gradient(ellipse at top, #fff0f8, #ffd3ec 70%);
+  }
+
+  [data-theme="y2k"]{
+    --bg:#e4ecf5;
+    --panel:#f7fafd;
+    --border:#b9c8dc;
+    --ink:#101828;
+    --muted:#5b6b83;
+    --muted-light:#93a3ba;
+
+    --tfl-blue:#0ac8e0;      /* chrome cyan */
+    --dlr:#ff2fd1;           /* Y2K magenta */
+    --rail-blue:#3a5bd9;
+    --rail-red:#ff2fd1;
+    --good:#00c896;
+    --warn:#ffb100;
+    --boat:#7b3ff2;
+  }
+  [data-theme="y2k"] body{
+    background:linear-gradient(160deg, #dce8f7 0%, #f3e9fb 45%, #e0f7f5 100%);
+  }
+  [data-theme="y2k"] .board, [data-theme="y2k"] .compare-card, [data-theme="y2k"] .qbox, [data-theme="y2k"] .weather{
+    box-shadow:0 1px 2px rgba(17,21,28,0.05), inset 0 1px 0 rgba(255,255,255,0.9) !important;
+  }
+
+  [data-theme="cyberpunk"]{
+    --bg:#0a0a10;
+    --panel:#12121c;
+    --border:#2a1f3d;
+    --ink:#eafcff;
+    --muted:#8b8ba3;
+    --muted-light:#5a5a75;
+
+    --tfl-blue:#00fff2;      /* neon cyan */
+    --dlr:#ff2bd6;           /* neon pink */
+    --rail-blue:#00fff2;
+    --rail-red:#ff2bd6;
+    --good:#39ff6a;
+    --warn:#f6ff00;
+    --boat:#ff2bd6;
+  }
+  [data-theme="cyberpunk"] body{
+    background:
+      radial-gradient(circle at 15% 0%, rgba(255,43,214,0.12), transparent 45%),
+      radial-gradient(circle at 85% 20%, rgba(0,255,242,0.12), transparent 45%),
+      #0a0a10;
+  }
+  [data-theme="cyberpunk"] .board, [data-theme="cyberpunk"] .compare-card,
+  [data-theme="cyberpunk"] .qbox, [data-theme="cyberpunk"] .weather{
+    box-shadow:0 0 14px rgba(0,255,242,0.08) !important;
+  }
+  [data-theme="cyberpunk"] .qbig{
+    text-shadow:0 0 10px currentColor;
+  }
+
+  [data-theme="goldenhour"]{
+    --bg:#2b1b3d;
+    --panel:#3a2a4d;
+    --border:#5a3f6e;
+    --ink:#fdf1e0;
+    --muted:#c9a9d6;
+    --muted-light:#8a6c9c;
+
+    --tfl-blue:#ff6f59;      /* coral */
+    --dlr:#ffb347;           /* amber */
+    --rail-blue:#ff8c6b;
+    --rail-red:#ff5a5f;
+    --good:#ffd166;
+    --warn:#ff8c42;
+    --boat:#e0576b;
+  }
+  [data-theme="goldenhour"] body{
+    background:linear-gradient(180deg, #3d2255 0%, #6a2f4d 45%, #a84c3f 100%);
+  }
+
+  [data-theme="halloween"]{
+    --bg:#0d0d0d;
+    --panel:#181410;
+    --border:#3d2b1a;
+    --ink:#f2e9dc;
+    --muted:#a08560;
+    --muted-light:#6b5638;
+
+    --tfl-blue:#ff7518;      /* pumpkin orange */
+    --dlr:#8a4fd1;           /* witchy purple */
+    --rail-blue:#ff7518;
+    --rail-red:#ff3b3b;
+    --good:#7ed957;
+    --warn:#ff7518;
+    --boat:#8a4fd1;
+  }
+  [data-theme="halloween"] body{
+    background:radial-gradient(ellipse at top, #1a1210 0%, #0d0d0d 70%);
+  }
+  [data-theme="halloween"] .qbig{
+    text-shadow:0 0 10px currentColor;
+  }
+
+  [data-theme="mint"]{
+    --bg:#eafaf3;
+    --panel:#ffffff;
+    --border:#bfe8d6;
+    --ink:#1f3d36;
+    --muted:#5f8a7c;
+    --muted-light:#9fcabc;
+
+    --tfl-blue:#3fb08f;      /* mint */
+    --dlr:#4fd1a5;
+    --rail-blue:#7c9ddb;     /* soft periwinkle */
+    --rail-red:#ff8a80;      /* soft coral */
+    --good:#3fb08f;
+    --warn:#f4b860;
+    --boat:#b39ddb;          /* lavender */
+  }
+  [data-theme="mint"] body{
+    background:linear-gradient(160deg, #eafaf3 0%, #eef2fb 100%);
+  }
+
+  #matrixRain{
+    position:fixed;
+    inset:0;
+    z-index:-1;
+    opacity:0.35;
+    pointer-events:none;
+    display:none;
+  }
+  [data-theme="matrix"] #matrixRain{ display:block; }
+
+  #themeSelect{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    font-weight:600;
+    color:var(--muted);
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:999px;
+    padding:6px 10px;
+    cursor:pointer;
+    margin-left:8px;
+    appearance:none;
+    -webkit-appearance:none;
+    text-align:center;
+    text-align-last:center;
+  }
+  #themeSelect:hover{ color:var(--ink); }
+  #themeSelect:focus{ outline:none; border-color:var(--tfl-blue); }
   *{box-sizing:border-box;}
   body{
     margin:0;
@@ -30,6 +245,7 @@
     font-family:'Inter', sans-serif;
     padding:28px 16px 44px;
     -webkit-font-smoothing:antialiased;
+    transition:background 0.25s ease, color 0.25s ease;
   }
   .wrap{max-width:720px;margin:0 auto;}
 
@@ -77,6 +293,7 @@
     margin-bottom:16px;
     box-shadow:0 1px 2px rgba(17,21,28,0.04);
   }
+
   .roundel{
     flex-shrink:0;
     width:60px;
@@ -299,6 +516,7 @@
 </style>
 </head>
 <body>
+<canvas id="matrixRain"></canvas>
 <div class="wrap">
 
   <header>
@@ -306,7 +524,20 @@
       <div class="eyebrow">Greenwich Station</div>
       <h1>Off to <span>Bank</span></h1>
     </div>
-    <div id="clock">--:--:--</div>
+    <div style="display:flex;align-items:center;">
+      <div id="clock">--:--:--</div>
+      <select id="themeSelect" onchange="setTheme(this.value)">
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+        <option value="matrix">Matrix</option>
+        <option value="barbie">Barbie</option>
+        <option value="y2k">Y2K</option>
+        <option value="cyberpunk">Cyberpunk</option>
+        <option value="goldenhour">Golden Hour</option>
+        <option value="halloween">Halloween</option>
+        <option value="mint">Mint</option>
+      </select>
+    </div>
   </header>
 
   <div class="weather" id="weatherPanel">
@@ -360,10 +591,71 @@
     <div id="railBoard"><div class="status">Loading departures…</div></div>
   </div>
 
+  <div class="board">
+    <div class="board-head">
+      <div class="dot" style="background:var(--boat)"></div>
+      <h2>Uber Boat · Greenwich Pier → Central London</h2>
+      <div class="sub" id="boatUpdated">···</div>
+    </div>
+    <div id="boatBoard"><div class="status">Loading departures…</div></div>
+  </div>
+
   <footer>Weather via Open-Meteo · Departures via TfL Unified API &amp; National Rail Darwin · refreshes every 30s</footer>
 </div>
 
 <script>
+// ---------- THEME (light / dark / matrix / barbie) ----------
+let matrixAnimHandle = null;
+
+function setTheme(name){
+  if(name === 'light'){
+    document.body.removeAttribute('data-theme');
+  } else {
+    document.body.setAttribute('data-theme', name);
+  }
+  if(name === 'matrix'){
+    startMatrixRain();
+  } else {
+    stopMatrixRain();
+  }
+}
+
+function startMatrixRain(){
+  const canvas = document.getElementById('matrixRain');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const fontSize = 15;
+  const columns = Math.floor(canvas.width / fontSize);
+  const drops = new Array(columns).fill(0);
+  const chars = 'アカサタナハマヤラワ0123456789';
+
+  function draw(){
+    ctx.fillStyle = 'rgba(0,0,0,0.06)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#00ff41';
+    ctx.font = fontSize + 'px monospace';
+    for(let i = 0; i < drops.length; i++){
+      const text = chars[Math.floor(Math.random() * chars.length)];
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+      if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    }
+    matrixAnimHandle = requestAnimationFrame(draw);
+  }
+  if(!matrixAnimHandle) draw();
+}
+
+function stopMatrixRain(){
+  if(matrixAnimHandle){
+    cancelAnimationFrame(matrixAnimHandle);
+    matrixAnimHandle = null;
+    const canvas = document.getElementById('matrixRain');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+}
+
 const GREENWICH_LAT = 51.4826, GREENWICH_LON = -0.0077;
 
 // live clock
@@ -455,20 +747,21 @@ function operatorBadge(name){
   const map = {
     'Southeastern': { bg:'#0a2a52', label:'SE' },
     'Thameslink':   { bg:'#84144f', label:'TL' },
-    'DLR':          { bg:'var(--dlr)', label:'DLR' }
+    'DLR':          { bg:'var(--dlr)', label:'DLR' },
+    'UberBoat':     { bg:'var(--boat)', label:'BOAT' }
   };
   const m = map[name] || { bg:'#4a5560', label:(name||'??').slice(0,2).toUpperCase() };
   return `<span class="badge" style="background:${m.bg}">${m.label}</span>`;
 }
 
-function renderBoard(el, arrivals, emptyMsg){
+function renderBoard(el, arrivals, emptyMsg, badgeName){
   if(!arrivals.length){
     el.innerHTML = `<div class="status">${emptyMsg}</div>`;
     return;
   }
   const rows = arrivals.slice(0,5).map(a => `
     <tr>
-      <td class="dest">${operatorBadge('DLR')}${a.destinationName || a.towards || 'Unknown'}</td>
+      <td class="dest">${operatorBadge(badgeName || 'DLR')}${a.destinationName || a.towards || 'Unknown'}</td>
       <td class="plat">${a.platformName ? 'Plat ' + a.platformName : ''}</td>
       <td class="time">${fmtMins(a.timeToStation)}</td>
     </tr>`).join('');
@@ -499,6 +792,28 @@ async function fetchDlrLineStatus(){
     return ls || null;
   }catch(e){
     return null;
+  }
+}
+
+// ---------- UBER BOAT (Thames Clippers) via TfL river-bus mode ----------
+const BOAT_STOP_ID = '930GGNW'; // Greenwich Pier, confirmed against TfL's own site
+const BOAT_WRONG_WAY = ['Woolwich', 'Barking Riverside', 'North Greenwich']; // away from town
+
+async function fetchBoatArrivals(){
+  try{
+    const res = await fetch(`https://api.tfl.gov.uk/StopPoint/${BOAT_STOP_ID}/Arrivals`);
+    if(!res.ok){
+      const body = await res.text();
+      return { ok:false, data:[], error:`TfL API returned ${res.status}: ${body.slice(0,150)}` };
+    }
+    const data = await res.json();
+    if(!Array.isArray(data)) return { ok:false, data:[], error:'Unexpected response shape from TfL.' };
+    const towardsTown = data
+      .filter(a => !BOAT_WRONG_WAY.some(w => (a.destinationName || '').includes(w)))
+      .sort((a,b) => a.timeToStation - b.timeToStation);
+    return { ok:true, data:towardsTown, error: towardsTown.length ? null : 'No central-London-bound boats found right now.' };
+  }catch(e){
+    return { ok:false, data:[], error:`Network error fetching boat: ${e.message}` };
   }
 }
 
@@ -592,10 +907,11 @@ function tickCountdowns(){
 setInterval(tickCountdowns, 30 * 1000);
 
 async function loadDepartures(){
-  const [dlrResult, railResult, dlrStatus] = await Promise.all([
+  const [dlrResult, railResult, dlrStatus, boatResult] = await Promise.all([
     fetchDlrArrivals(),
     fetchRailDepartures(),
-    fetchDlrLineStatus()
+    fetchDlrLineStatus(),
+    fetchBoatArrivals()
   ]);
 
   const dlrAlertEl = document.getElementById('dlrAlert');
@@ -618,6 +934,11 @@ async function loadDepartures(){
   renderRailBoard(
     document.getElementById('railBoard'), railArr,
     railResult.error || 'No rail departures returned right now.'
+  );
+  let boatArr = boatResult.data;
+  renderBoard(
+    document.getElementById('boatBoard'), boatArr,
+    boatResult.error || 'No boat departures returned right now.', 'UberBoat'
   );
 
   // Literal "next departure" countdowns - no reachability filtering, just the raw soonest one.
@@ -647,6 +968,7 @@ async function loadDepartures(){
   const stamp = new Date().toLocaleTimeString('en-GB',{hour12:false});
   document.getElementById('dlrUpdated').textContent = (dlrResult.ok ? 'updated ' : 'error · ') + stamp;
   document.getElementById('railUpdated').textContent = (railResult.ok ? 'updated ' : 'error · ') + stamp;
+  document.getElementById('boatUpdated').textContent = (boatResult.ok ? 'updated ' : 'error · ') + stamp;
 
   // Fixed (non-wait) segments, from real measured journey times:
   const DLR_WALK_TO_STATION = 8;   // walk home -> Cutty Sark
@@ -740,24 +1062,22 @@ async function loadDepartures(){
     el.querySelector('.pill')?.remove();
   });
 
-  if(dlrResultCard && railResultCard){
-    const winnerIsDlr = dlrResultCard.totalMin <= railResultCard.totalMin;
-    const winnerId = winnerIsDlr ? 'dlrCard' : 'railCard';
-    let winnerColor;
-    if(winnerIsDlr){
-      winnerColor = 'var(--dlr)';
-    } else {
-      const opColors = { 'Southeastern':'#0a2a52', 'Thameslink':'#84144f' };
-      winnerColor = opColors[railResultCard.operator] || 'var(--rail-blue)';
-    }
-    const winnerEl = document.getElementById(winnerId);
+  const candidates = [
+    dlrResultCard && { id:'dlrCard', totalMin:dlrResultCard.totalMin, color:'var(--dlr)' },
+    railResultCard && { id:'railCard', totalMin:railResultCard.totalMin,
+      color:({ 'Southeastern':'#0a2a52', 'Thameslink':'#84144f' })[railResultCard.operator] || 'var(--rail-blue)' }
+  ].filter(Boolean);
+
+  if(candidates.length >= 2){
+    const winner = candidates.reduce((a,b) => a.totalMin <= b.totalMin ? a : b);
+    const winnerEl = document.getElementById(winner.id);
     winnerEl.classList.add('best');
-    winnerEl.style.borderColor = winnerColor;
-    winnerEl.style.boxShadow = `0 0 0 2px ${winnerColor}`;
+    winnerEl.style.borderColor = winner.color;
+    winnerEl.style.boxShadow = `0 0 0 2px ${winner.color}`;
     const pill = document.createElement('span');
     pill.className = 'pill';
     pill.textContent = 'Faster';
-    pill.style.background = winnerColor;
+    pill.style.background = winner.color;
     pill.style.color = '#fff';
     winnerEl.querySelector('.ch').appendChild(pill);
   }
