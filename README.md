@@ -4,7 +4,7 @@ A clean, real-time commute dashboard for journeys from Greenwich, London.
 
 ## Live webpage
 
-**[Open the Greenwich Commute dashboard](https://arashnass.github.io/greenwich-commute/)**
+**[Open the Greenwich Commute dashboard](https://arashnassirpour.com/greenwich-commute/)**
 
 ## Overview
 
@@ -17,6 +17,10 @@ The dashboard is designed around:
 - Clear service-status indicators
 - Fast, mobile-friendly access
 - A simple interface inspired by Transport for London and National Rail styling
+
+## Data source
+
+Live departure information is retrieved from the Transport for London Unified API, including the Cutty Sark DLR arrivals endpoint.
 
 ## Technology
 
