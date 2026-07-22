@@ -588,6 +588,7 @@
       <h2>Southeastern / Thameslink · Greenwich → London Bridge</h2>
       <div class="sub" id="railUpdated">···</div>
     </div>
+    <div id="railAlert"></div>
     <div id="railBoard"><div class="status">Loading departures…</div></div>
   </div>
 
@@ -879,7 +880,8 @@ async function fetchRailDepartures(){
       }
       const data = await res.json();
       const services = data.trainServices || [];
-      return { ok:true, data:services, error: services.length ? null : 'No Southeastern/Thameslink services returned right now.' };
+      const messages = (data.nrccMessages || []).map(m => m.value || m).filter(Boolean);
+      return { ok:true, data:services, messages, error: services.length ? null : 'No Southeastern/Thameslink services returned right now.' };
     }catch(e){
       errors.push(`${base}: ${e.name === 'AbortError' ? 'timed out' : e.message}`);
     }
@@ -919,6 +921,16 @@ async function loadDepartures(){
     dlrAlertEl.innerHTML = `<div class="alert"><span class="icon">⚠</span> DLR: ${dlrStatus.statusSeverityDescription}${dlrStatus.reason ? ' - ' + dlrStatus.reason.replace(/^DLR:\s*/,'') : ''}</div>`;
   } else {
     dlrAlertEl.innerHTML = '';
+  }
+
+  const railAlertEl = document.getElementById('railAlert');
+  const railMessages = railResult.messages || [];
+  if(railMessages.length){
+    railAlertEl.innerHTML = railMessages
+      .map(m => `<div class="alert"><span class="icon">⚠</span> ${m}</div>`)
+      .join('');
+  } else {
+    railAlertEl.innerHTML = '';
   }
 
   let dlrArr = dlrResult.data
