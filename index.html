@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#eef1f5">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>Greenwich → Work</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600;700&display=swap');
@@ -22,6 +26,17 @@
     --good:#027a3a;          /* service good / on time */
     --warn:#c75300;          /* delays */
     --boat:#a6192e;          /* Thames Clippers / Uber Boat red */
+
+    --alert-bg:#fdecea;
+    --alert-ink:#7a1a10;
+    --alert-border:#f6c6c0;
+
+    --quiet-bg:#12161c;      /* DLR tile keeps its original dark-board look */
+    --quiet-border:#262d36;
+    --quiet-label:#7c8794;
+    --quiet-ink:#ffb200;
+    --quiet-sub:#9aa3ad;
+
   }
 
   [data-theme="dark"]{
@@ -39,6 +54,10 @@
     --good:#3ddc84;
     --warn:#ffb648;
     --boat:#ff6b7f;
+
+    --alert-bg:#2c1512;
+    --alert-ink:#ffb4a8;
+    --alert-border:#5a2620;
   }
 
   [data-theme="matrix"]{
@@ -56,6 +75,17 @@
     --good:#00ff41;
     --warn:#ccff00;
     --boat:#00ffc3;
+
+    --alert-bg:#160406;
+    --alert-ink:#ff6b81;
+    --alert-border:#4d0f1a;
+
+    --quiet-bg:#040f07;
+    --quiet-border:#0f4d22;
+    --quiet-label:#0a7a24;
+    --quiet-ink:#00ff41;
+    --quiet-sub:#00b32c;
+
   }
   [data-theme="matrix"] body,
   [data-theme="matrix"] .qbig,
@@ -88,9 +118,14 @@
     --good:#00b389;
     --warn:#ff8a00;
     --boat:#c400a0;
+
+    --alert-bg:#ffe1ec;
+    --alert-ink:#8a0030;
+    --alert-border:#ffa8c4;
   }
   [data-theme="barbie"] body{
     background:radial-gradient(ellipse at top, #fff0f8, #ffd3ec 70%);
+    background-attachment:fixed;
   }
 
   [data-theme="y2k"]{
@@ -111,6 +146,7 @@
   }
   [data-theme="y2k"] body{
     background:linear-gradient(160deg, #dce8f7 0%, #f3e9fb 45%, #e0f7f5 100%);
+    background-attachment:fixed;
   }
   [data-theme="y2k"] .board, [data-theme="y2k"] .compare-card, [data-theme="y2k"] .qbox, [data-theme="y2k"] .weather{
     box-shadow:0 1px 2px rgba(17,21,28,0.05), inset 0 1px 0 rgba(255,255,255,0.9) !important;
@@ -131,12 +167,17 @@
     --good:#39ff6a;
     --warn:#f6ff00;
     --boat:#ff2bd6;
+
+    --alert-bg:#24102a;
+    --alert-ink:#ff9de8;
+    --alert-border:#4a1f52;
   }
   [data-theme="cyberpunk"] body{
     background:
       radial-gradient(circle at 15% 0%, rgba(255,43,214,0.12), transparent 45%),
       radial-gradient(circle at 85% 20%, rgba(0,255,242,0.12), transparent 45%),
       #0a0a10;
+    background-attachment:fixed;
   }
   [data-theme="cyberpunk"] .board, [data-theme="cyberpunk"] .compare-card,
   [data-theme="cyberpunk"] .qbox, [data-theme="cyberpunk"] .weather{
@@ -161,9 +202,14 @@
     --good:#ffd166;
     --warn:#ff8c42;
     --boat:#e0576b;
+
+    --alert-bg:#4a2436;
+    --alert-ink:#ffc9b8;
+    --alert-border:#7a3d4e;
   }
   [data-theme="goldenhour"] body{
     background:linear-gradient(180deg, #3d2255 0%, #6a2f4d 45%, #a84c3f 100%);
+    background-attachment:fixed;
   }
 
   [data-theme="halloween"]{
@@ -181,9 +227,14 @@
     --good:#7ed957;
     --warn:#ff7518;
     --boat:#8a4fd1;
+
+    --alert-bg:#2a1410;
+    --alert-ink:#ffb08a;
+    --alert-border:#54291c;
   }
   [data-theme="halloween"] body{
     background:radial-gradient(ellipse at top, #1a1210 0%, #0d0d0d 70%);
+    background-attachment:fixed;
   }
   [data-theme="halloween"] .qbig{
     text-shadow:0 0 10px currentColor;
@@ -207,6 +258,7 @@
   }
   [data-theme="mint"] body{
     background:linear-gradient(160deg, #eafaf3 0%, #eef2fb 100%);
+    background-attachment:fixed;
   }
 
   #matrixRain{
@@ -221,30 +273,39 @@
 
   #themeSelect{
     font-family:'IBM Plex Mono',monospace;
-    font-size:11px;
+    font-size:12px;
     font-weight:600;
     color:var(--muted);
     background:var(--panel);
     border:1px solid var(--border);
     border-radius:999px;
-    padding:6px 10px;
+    padding:0 12px;
+    height:38px;
+    min-width:104px;
     cursor:pointer;
-    margin-left:8px;
     appearance:none;
     -webkit-appearance:none;
     text-align:center;
     text-align-last:center;
   }
   #themeSelect:hover{ color:var(--ink); }
-  #themeSelect:focus{ outline:none; border-color:var(--tfl-blue); }
+  #themeSelect:focus-visible{ outline:2px solid var(--tfl-blue); outline-offset:2px; }
+
   *{box-sizing:border-box;}
+  html{
+    -webkit-text-size-adjust:100%;
+    text-size-adjust:100%;
+  }
   body{
     margin:0;
     background:var(--bg);
     color:var(--ink);
     font-family:'Inter', sans-serif;
-    padding:28px 16px 44px;
+    padding:20px 14px calc(36px + env(safe-area-inset-bottom));
+    padding-left:calc(14px + env(safe-area-inset-left));
+    padding-right:calc(14px + env(safe-area-inset-right));
     -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
     transition:background 0.25s ease, color 0.25s ease;
   }
   .wrap{max-width:720px;margin:0 auto;}
@@ -253,51 +314,66 @@
     display:flex;
     justify-content:space-between;
     align-items:center;
-    margin-bottom:20px;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:18px;
   }
+  header .titles{min-width:0;}
   header .eyebrow{
-    font-size:11.5px;
+    font-size:11px;
     font-weight:600;
-    letter-spacing:2.5px;
+    letter-spacing:2.2px;
     color:var(--tfl-blue);
     text-transform:uppercase;
   }
   header h1{
     margin:2px 0 0;
     font-family:'Archivo', sans-serif;
-    font-size:28px;
+    font-size:clamp(22px, 6.4vw, 28px);
     font-weight:800;
     letter-spacing:-0.3px;
+    line-height:1.15;
     color:var(--ink);
   }
   header h1 span{color:var(--rail-red);}
+  .head-tools{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-shrink:0;
+  }
   #clock{
     font-family:'IBM Plex Mono',monospace;
-    font-size:15px;
+    font-size:14px;
     font-weight:600;
     color:var(--muted);
     background:var(--panel);
     border:1px solid var(--border);
     border-radius:999px;
-    padding:7px 14px;
+    padding:0 13px;
+    height:38px;
+    display:flex;
+    align-items:center;
+    font-variant-numeric:tabular-nums;
   }
 
   .weather{
     display:flex;
     align-items:center;
-    gap:16px;
+    gap:14px;
     background:var(--panel);
     border:1px solid var(--border);
     border-radius:14px;
-    padding:16px 18px;
-    margin-bottom:16px;
+    padding:14px 16px;
+    margin-bottom:14px;
     box-shadow:0 1px 2px rgba(17,21,28,0.04);
   }
 
   .roundel{
     flex-shrink:0;
-    width:60px;
-    height:60px;
+    width:52px;
+    height:52px;
+    line-height:0;
   }
   .weather .temp{
     font-family:'Archivo', sans-serif;
@@ -314,50 +390,70 @@
   }
   .weather .desc b{color:var(--ink);font-weight:600;}
 
-  .banner{
-    background:#fff;
-    border:1px solid var(--border);
-    border-left:4px solid var(--tfl-blue);
-    border-radius:10px;
-    padding:13px 16px;
-    margin-bottom:20px;
-    font-size:14px;
-    box-shadow:0 1px 2px rgba(17,21,28,0.04);
-  }
-  .banner b{color:var(--tfl-blue);}
-  .banner .note{display:block;color:var(--muted-light);font-size:11.5px;margin-top:5px;}
-
   .board{
     background:var(--panel);
     border:1px solid var(--border);
     border-radius:14px;
-    margin-bottom:16px;
+    margin-bottom:14px;
     overflow:hidden;
     box-shadow:0 1px 2px rgba(17,21,28,0.04);
   }
   .board-head{
     display:flex;
     align-items:center;
-    gap:10px;
-    padding:13px 16px;
+    gap:9px;
+    padding:12px 14px;
     border-bottom:1px solid var(--border);
+    flex-wrap:wrap;
   }
   .dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;}
   .board-head h2{
     font-family:'Archivo', sans-serif;
-    font-size:13.5px;
+    font-size:13px;
     margin:0;
     letter-spacing:0.2px;
     font-weight:700;
     color:var(--ink);
+    line-height:1.3;
+    min-width:0;
   }
-  .board-head .sub{margin-left:auto;font-size:10.5px;color:var(--muted-light);font-family:'IBM Plex Mono',monospace;}
+  .board-head .sub{
+    margin-left:auto;
+    font-size:10.5px;
+    color:var(--muted-light);
+    font-family:'IBM Plex Mono',monospace;
+    white-space:nowrap;
+  }
 
-  table{width:100%;border-collapse:collapse;}
-  td{padding:11px 16px;font-size:14px;border-top:1px solid var(--border);}
+  table{width:100%;border-collapse:collapse;table-layout:fixed;}
+  td{
+    padding:11px 14px;
+    font-size:14px;
+    border-top:1px solid var(--border);
+    vertical-align:middle;
+  }
   tr:first-child td{border-top:none;}
-  td.dest{color:var(--ink);font-weight:500;}
-  td.plat{color:var(--muted);font-size:12px;}
+  td.dest{
+    color:var(--ink);
+    font-weight:500;
+    overflow-wrap:anywhere;
+  }
+  /* Platform now lives on the meta line under the destination, so it can
+     never collide with the countdown column. */
+  .meta{
+    display:block;
+    font-size:11.5px;
+    font-weight:500;
+    color:var(--muted);
+    margin-top:3px;
+    line-height:1.4;
+  }
+  .meta .sep{color:var(--muted-light);margin:0 5px;}
+  .meta .plat{
+    font-family:'IBM Plex Mono',monospace;
+    font-weight:600;
+    color:var(--ink);
+  }
   td.time{
     text-align:right;
     font-family:'IBM Plex Mono',monospace;
@@ -365,6 +461,8 @@
     font-size:15px;
     color:var(--ink);
     white-space:nowrap;
+    width:82px;
+    font-variant-numeric:tabular-nums;
   }
   .badge{
     display:inline-block;
@@ -382,69 +480,107 @@
 
   .alert{
     display:flex;
-    align-items:center;
+    align-items:flex-start;
     gap:8px;
-    background:#fdecea;
-    color:#7a1a10;
-    border-bottom:1px solid #f6c6c0;
-    padding:9px 16px;
+    background:var(--alert-bg);
+    color:var(--alert-ink);
+    border-bottom:1px solid var(--alert-border);
+    padding:9px 14px;
     font-size:12.5px;
     font-weight:600;
+    line-height:1.45;
+    overflow-wrap:anywhere;
   }
-  .alert .icon{font-size:14px;}
+  .alert .icon{font-size:14px;flex-shrink:0;line-height:1.4;}
 
   .compare{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:12px;
-    margin-bottom:20px;
+    margin-bottom:16px;
   }
-  @media (max-width:420px){
-    .compare{grid-template-columns:1fr;}
-  }
+  /* Countdown tiles share the panel language of the boards below, and each
+     carries its own line colour so the two are never mistaken for each other. */
   .qbox{
-    background:#12161c;
-    border:1px solid #262d36;
+    --accent:var(--tfl-blue);
+    position:relative;
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-top:3px solid var(--accent);
     border-radius:14px;
-    padding:16px 18px;
+    padding:13px 16px 14px;
+    box-shadow:0 1px 2px rgba(17,21,28,0.04);
+    min-width:0;
+  }
+  .qbox.dlr{
+    --accent:var(--dlr);
+    background:var(--quiet-bg);
+    border-color:var(--quiet-border);
     box-shadow:0 1px 2px rgba(17,21,28,0.08);
   }
-  .qbox .qlabel{
+  .qbox.dlr .qlabel{
     font-family:'IBM Plex Mono',monospace;
-    font-size:10.5px;
     font-weight:600;
+    font-size:10.5px;
+    letter-spacing:1.4px;
+    color:var(--quiet-label);
+  }
+  .qbox.dlr .qlabel::before{background:var(--quiet-label);}
+  .qbox.dlr .qbig{
+    color:var(--quiet-ink);
+    text-shadow:0 0 14px rgba(255,178,0,0.35);
+  }
+  .qbox.dlr .qsub{
+    font-family:'IBM Plex Mono',monospace;
+    color:var(--quiet-sub);
+    border-top-color:var(--quiet-border);
+  }
+  .qbox.rail{--accent:var(--rail-blue);}
+  .qbox .qlabel{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    font-family:'Archivo', sans-serif;
+    font-size:11px;
+    font-weight:700;
     text-transform:uppercase;
-    letter-spacing:1.6px;
-    color:#7c8794;
-    margin-bottom:8px;
+    letter-spacing:1.2px;
+    color:var(--accent);
+    margin-bottom:7px;
+  }
+  .qbox .qlabel::before{
+    content:'';
+    width:9px;
+    height:9px;
+    border-radius:50%;
+    background:var(--accent);
+    flex-shrink:0;
   }
   .qbox .qbig{
     font-family:'IBM Plex Mono',monospace;
-    font-size:40px;
+    font-size:clamp(28px, 8.5vw, 38px);
     font-weight:700;
-    color:#ffb200;
-    line-height:1;
-    letter-spacing:1px;
-    text-shadow:0 0 14px rgba(255,178,0,0.35);
+    color:var(--ink);
+    line-height:1.05;
+    letter-spacing:0.5px;
+    font-variant-numeric:tabular-nums;
   }
   .qbox .qsub{
     font-size:11.5px;
-    color:#9aa3ad;
+    color:var(--muted);
     margin-top:9px;
-    font-family:'IBM Plex Mono',monospace;
-    border-top:1px solid #262d36;
+    border-top:1px solid var(--border);
     padding-top:8px;
+    line-height:1.45;
+    overflow-wrap:anywhere;
   }
   .compare-card{
     background:var(--panel);
     border:1px solid var(--border);
     border-radius:14px;
-    padding:15px 16px;
+    padding:14px 16px;
     box-shadow:0 1px 2px rgba(17,21,28,0.04);
-  }
-  .compare-card.best{
-    border-width:1px;
-    border-style:solid;
+    min-width:0;
   }
   .compare-card .segments{
     font-size:11px;
@@ -456,6 +592,7 @@
     align-items:center;
     gap:7px;
     margin-bottom:9px;
+    flex-wrap:wrap;
   }
   .compare-card h3{
     margin:0;
@@ -481,37 +618,77 @@
     font-size:22px;
     font-weight:700;
     color:var(--ink);
-    line-height:1.1;
+    line-height:1.2;
+    overflow-wrap:anywhere;
   }
   .compare-card .depart small{
+    display:block;
     font-family:'Inter',sans-serif;
-    font-size:11px;
+    font-size:11.5px;
     font-weight:500;
     color:var(--muted);
-    margin-left:6px;
+    margin-top:3px;
   }
   .compare-card .arrive{
     font-size:12px;
     color:var(--muted);
     margin-top:6px;
+    line-height:1.5;
   }
   .compare-card .arrive b{color:var(--ink);}
   .compare-card .caution{
     margin-top:8px;
-    font-size:11px;
+    font-size:11.5px;
     color:var(--warn);
     font-weight:600;
+    line-height:1.45;
   }
 
-  .status{padding:18px 16px;color:var(--muted);font-size:13px;}
+  .status{padding:16px 14px;color:var(--muted);font-size:13px;line-height:1.5;overflow-wrap:anywhere;}
   .status.err{color:var(--rail-red);}
 
   footer{
     text-align:center;
-    font-size:9.5px;
+    font-size:10px;
     color:var(--muted-light);
     margin-top:10px;
+    line-height:1.6;
     opacity:0.75;
+  }
+
+  /* ---- Phone layout (Pixel 9 sits at 412 CSS px wide) ---- */
+  @media (max-width:600px){
+    #recommendation{grid-template-columns:1fr;}
+    .compare-card .depart{font-size:20px;}
+  }
+
+  @media (max-width:440px){
+    body{padding-top:16px;}
+    header{margin-bottom:14px;}
+    header .titles{flex:1 1 100%;order:-1;}
+    .head-tools{width:100%;justify-content:space-between;}
+    #clock{flex:0 0 auto;}
+    #themeSelect{flex:1 1 auto;max-width:180px;}
+    .compare{gap:10px;}
+    .qbox{padding:13px 14px;}
+    .weather{gap:12px;padding:13px 14px;}
+    .roundel{width:46px;height:46px;}
+    .weather .temp{font-size:24px;}
+    .weather .desc{font-size:12.5px;}
+    td{padding:11px 12px;font-size:13.5px;}
+    .meta{font-size:11px;}
+    td.time{width:74px;font-size:14px;}
+    .board-head{padding:11px 12px;}
+    .board-head h2{font-size:12.5px;flex:1 1 auto;}
+    .board-head .sub{flex:1 1 100%;margin-left:0;text-align:left;}
+  }
+
+  @media (max-width:340px){
+    .compare{grid-template-columns:1fr;}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important;}
   }
 </style>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-0WERZ6WKQY"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","G-0WERZ6WKQY");</script></head>
@@ -520,13 +697,13 @@
 <div class="wrap">
 
   <header>
-    <div>
+    <div class="titles">
       <div class="eyebrow">Greenwich Station</div>
       <h1>Off to <span>Bank</span></h1>
     </div>
-    <div style="display:flex;align-items:center;">
+    <div class="head-tools">
       <div id="clock">--:--:--</div>
-      <select id="themeSelect" onchange="setTheme(this.value)">
+      <select id="themeSelect" aria-label="Theme" onchange="setTheme(this.value)">
         <option value="light">Light</option>
         <option value="dark">Dark</option>
         <option value="matrix">Matrix</option>
@@ -549,12 +726,12 @@
   </div>
 
   <div class="compare">
-    <div class="qbox" id="dlrCountdownBox">
+    <div class="qbox dlr" id="dlrCountdownBox">
       <div class="qlabel">Next DLR</div>
       <div class="qbig" id="dlrCountdown">--</div>
       <div class="qsub" id="dlrCountdownDest">Loading…</div>
     </div>
-    <div class="qbox" id="railCountdownBox">
+    <div class="qbox rail" id="railCountdownBox">
       <div class="qlabel">Next Train</div>
       <div class="qbig" id="railCountdown">--</div>
       <div class="qsub" id="railCountdownDest">Loading…</div>
@@ -608,12 +785,24 @@
 // ---------- THEME (light / dark / matrix / barbie) ----------
 let matrixAnimHandle = null;
 
+const THEME_COLORS = {
+  light:'#eef1f5', dark:'#0e1116', matrix:'#000000', barbie:'#ffe3f1',
+  y2k:'#e4ecf5', cyberpunk:'#0a0a10', goldenhour:'#2b1b3d',
+  halloween:'#0d0d0d', mint:'#eafaf3'
+};
+
 function setTheme(name){
   if(name === 'light'){
     document.body.removeAttribute('data-theme');
   } else {
     document.body.setAttribute('data-theme', name);
   }
+  // Keeps the Android status bar and Chrome toolbar matching the page.
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.setAttribute('content', THEME_COLORS[name] || '#eef1f5');
+
+  try{ localStorage.setItem('commuteTheme', name); }catch(e){}
+
   if(name === 'matrix'){
     startMatrixRain();
   } else {
@@ -624,22 +813,35 @@ function setTheme(name){
 function startMatrixRain(){
   const canvas = document.getElementById('matrixRain');
   const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
   const fontSize = 15;
-  const columns = Math.floor(canvas.width / fontSize);
-  const drops = new Array(columns).fill(0);
+  let columns, drops;
+
+  function sizeCanvas(){
+    // devicePixelRatio matters a lot on the Pixel 9, otherwise the glyphs blur.
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.floor(window.innerWidth * dpr);
+    canvas.height = Math.floor(window.innerHeight * dpr);
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    columns = Math.floor(window.innerWidth / fontSize);
+    drops = new Array(columns).fill(0);
+  }
+  sizeCanvas();
+  window.addEventListener('resize', sizeCanvas);
+  window.addEventListener('orientationchange', sizeCanvas);
+
   const chars = 'アカサタナハマヤラワ0123456789';
 
   function draw(){
     ctx.fillStyle = 'rgba(0,0,0,0.06)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
     ctx.fillStyle = '#00ff41';
     ctx.font = fontSize + 'px monospace';
     for(let i = 0; i < drops.length; i++){
       const text = chars[Math.floor(Math.random() * chars.length)];
       ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-      if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+      if(drops[i] * fontSize > window.innerHeight && Math.random() > 0.975) drops[i] = 0;
       drops[i]++;
     }
     matrixAnimHandle = requestAnimationFrame(draw);
@@ -653,9 +855,19 @@ function stopMatrixRain(){
     matrixAnimHandle = null;
     const canvas = document.getElementById('matrixRain');
     const ctx = canvas.getContext('2d');
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
 }
+
+// Restore the last theme you picked.
+try{
+  const saved = localStorage.getItem('commuteTheme');
+  if(saved && THEME_COLORS[saved]){
+    document.getElementById('themeSelect').value = saved;
+    setTheme(saved);
+  }
+}catch(e){}
 
 const GREENWICH_LAT = 51.4826, GREENWICH_LON = -0.0077;
 
@@ -679,7 +891,8 @@ const weatherCodes = {
 
 function weatherIconSvg(code, isNight){
   const sun = '#e8a53d', cloud = '#8a94a3', cloudLight = '#aeb6c2', rain = '#2f6fb0', snow = '#7fa8c9', bolt = '#c75300', moon = '#5b6b8c';
-  const wrap = inner => `<svg width="52" height="52" viewBox="0 0 52 52" fill="none">${inner}</svg>`;
+  // width/height dropped so the SVG scales to its .roundel box on small screens.
+  const wrap = inner => `<svg viewBox="0 0 52 52" width="100%" height="100%" fill="none">${inner}</svg>`;
 
   if(code === 0 || code === 1){
     return isNight
@@ -760,12 +973,15 @@ function renderBoard(el, arrivals, emptyMsg, badgeName){
     el.innerHTML = `<div class="status">${emptyMsg}</div>`;
     return;
   }
-  const rows = arrivals.slice(0,5).map(a => `
+  const rows = arrivals.slice(0,5).map(a => {
+    const plat = a.platformName ? `<span class="plat">${a.platformName}</span>` : '';
+    return `
     <tr>
-      <td class="dest">${operatorBadge(badgeName || 'DLR')}${a.destinationName || a.towards || 'Unknown'}</td>
-      <td class="plat">${a.platformName ? 'Plat ' + a.platformName : ''}</td>
+      <td class="dest">${operatorBadge(badgeName || 'DLR')}${a.destinationName || a.towards || 'Unknown'}
+        ${plat ? `<span class="meta">Platform ${plat}</span>` : ''}</td>
       <td class="time">${fmtMins(a.timeToStation)}</td>
-    </tr>`).join('');
+    </tr>`;
+  }).join('');
   el.innerHTML = `<table>${rows}</table>`;
 }
 
@@ -858,11 +1074,14 @@ function renderRailBoard(el, services, emptyMsg){
     const statusColor = cancelled ? 'var(--rail-red)' : (status === 'On time' ? 'var(--good)' : 'var(--warn)');
     const mins = minsUntil(s.std);
     const timeLabel = cancelled ? 'Cancelled' : (mins === null ? (s.std || '--:--') : (mins <= 0 ? 'Due' : `${mins} min`));
+    const platBit = s.platform
+      ? `<span class="sep">·</span>Platform <span class="plat">${s.platform}</span>`
+      : '';
     return `
     <tr>
-      <td class="dest">${operatorBadge(s.operator)}${dest}<br><span class="plat" style="font-size:11px;margin-left:0;">Std ${s.std || '--:--'} · <span style="color:${statusColor};font-weight:700;">${status}</span></span></td>
-      <td class="plat">${s.platform ? 'Plat ' + s.platform : ''}</td>
-      <td class="time" style="${cancelled ? 'color:var(--rail-red);' : ''}">${timeLabel}</td>
+      <td class="dest">${operatorBadge(s.operator)}${dest}
+        <span class="meta">${s.std || '--:--'}<span class="sep">·</span><span style="color:${statusColor};font-weight:700;">${status}</span>${platBit}</span></td>
+      <td class="time" style="${cancelled ? 'color:var(--rail-red);font-size:12px;' : ''}">${timeLabel}</td>
     </tr>`;
   }).join('');
   el.innerHTML = `<table>${rows}</table>`;
@@ -918,7 +1137,7 @@ async function loadDepartures(){
 
   const dlrAlertEl = document.getElementById('dlrAlert');
   if(dlrStatus && dlrStatus.statusSeverityDescription && dlrStatus.statusSeverityDescription !== 'Good Service'){
-    dlrAlertEl.innerHTML = `<div class="alert"><span class="icon">⚠</span> DLR: ${dlrStatus.statusSeverityDescription}${dlrStatus.reason ? ' - ' + dlrStatus.reason.replace(/^DLR:\s*/,'') : ''}</div>`;
+    dlrAlertEl.innerHTML = `<div class="alert"><span class="icon">⚠</span> <span>DLR: ${dlrStatus.statusSeverityDescription}${dlrStatus.reason ? ' - ' + dlrStatus.reason.replace(/^DLR:\s*/,'') : ''}</span></div>`;
   } else {
     dlrAlertEl.innerHTML = '';
   }
@@ -927,7 +1146,7 @@ async function loadDepartures(){
   const railMessages = railResult.messages || [];
   if(railMessages.length){
     railAlertEl.innerHTML = railMessages
-      .map(m => `<div class="alert"><span class="icon">⚠</span> ${m}</div>`)
+      .map(m => `<div class="alert"><span class="icon">⚠</span> <span>${m}</span></div>`)
       .join('');
   } else {
     railAlertEl.innerHTML = '';
@@ -1015,13 +1234,13 @@ async function loadDepartures(){
       ['.arrive','.caution','.segments'].forEach(sel => card.querySelector(sel)?.remove());
     };
     if(!ok || !items.length){
-      card.querySelector('.depart').innerHTML = emptyMsg;
+      card.querySelector('.depart').innerHTML = `<span style="font-size:14px;font-family:'Inter',sans-serif;font-weight:500;">${emptyMsg}</span>`;
       clearExtras();
       return null;
     }
     const pick = pickReachable(items, walkToStationMin);
     if(!pick){
-      card.querySelector('.depart').innerHTML = `No catchable departure right now - the soonest live train is closer than the ${walkToStationMin} min walk there.`;
+      card.querySelector('.depart').innerHTML = `<span style="font-size:14px;font-family:'Inter',sans-serif;font-weight:500;">No catchable departure right now. The soonest live train is closer than the ${walkToStationMin} min walk there.</span>`;
       clearExtras();
       return null;
     }
@@ -1047,7 +1266,7 @@ async function loadDepartures(){
     if(pick.slackMin < GETREADY_MIN){
       if(!cautionEl){ cautionEl = document.createElement('div'); cautionEl.className = 'caution'; card.appendChild(cautionEl); }
       cautionEl.textContent = pick.slackMin <= 0
-        ? `Leave right now - you're already cutting it fine for this one.`
+        ? `Leave right now, you're already cutting it fine for this one.`
         : `Leave by ${fmtClock(leaveByClock)} (just ${Math.round(pick.slackMin)} min from now) to make it.`;
     } else if(cautionEl){
       cautionEl.remove();
@@ -1099,6 +1318,16 @@ loadWeather();
 loadDepartures();
 setInterval(loadWeather, 10 * 60 * 1000);
 setInterval(loadDepartures, 30 * 1000);
+
+// Refresh the moment you bring the phone back from your pocket, so you never
+// read a stale board on the walk to the station.
+document.addEventListener('visibilitychange', () => {
+  if(document.visibilityState === 'visible'){
+    tickClock();
+    tickCountdowns();
+    loadDepartures();
+  }
+});
 </script>
 </body>
 </html>
