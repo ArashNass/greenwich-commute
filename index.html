@@ -271,6 +271,36 @@
   }
   [data-theme="matrix"] #matrixRain{ display:block; }
 
+  #refreshBtn{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    font-weight:600;
+    color:var(--muted);
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:999px;
+    padding:0 13px 0 11px;
+    height:38px;
+    cursor:pointer;
+    flex-shrink:0;
+    -webkit-tap-highlight-color:transparent;
+  }
+  #refreshBtn:active{transform:scale(0.96);}
+  #refreshBtn:focus-visible{outline:2px solid var(--tfl-blue);outline-offset:2px;}
+  #refreshBtn svg{width:15px;height:15px;flex-shrink:0;}
+  #refreshBtn .rlabel{
+    font-variant-numeric:tabular-nums;
+    min-width:26px;
+    text-align:left;
+  }
+  #refreshBtn.loading{color:var(--tfl-blue);border-color:var(--tfl-blue);}
+  #refreshBtn.loading svg{animation:spin 0.8s linear infinite;transform-origin:50% 50%;}
+  #refreshBtn.paused{opacity:0.55;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
   #themeSelect{
     font-family:'IBM Plex Mono',monospace;
     font-size:12px;
@@ -703,6 +733,13 @@
     </div>
     <div class="head-tools">
       <div id="clock">--:--:--</div>
+      <button id="refreshBtn" type="button" aria-label="Refresh departures now">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12a9 9 0 1 1-2.64-6.36"/>
+          <path d="M21 3v6h-6"/>
+        </svg>
+        <span class="rlabel" id="refreshLabel">15s</span>
+      </button>
       <select id="themeSelect" aria-label="Theme" onchange="setTheme(this.value)">
         <option value="light">Light</option>
         <option value="dark">Dark</option>
@@ -778,7 +815,7 @@
     <div id="boatBoard"><div class="status">Loading departures…</div></div>
   </div>
 
-  <footer>Weather via Open-Meteo · Departures via TfL Unified API &amp; National Rail Darwin · refreshes every 30s</footer>
+  <footer>Weather via Open-Meteo · Departures via TfL Unified API &amp; National Rail Darwin · refreshes every 15s</footer>
 </div>
 
 <script>
@@ -1314,20 +1351,91 @@ async function loadDepartures(){
   }
 }
 
-loadWeather();
-loadDepartures();
-setInterval(loadWeather, 10 * 60 * 1000);
-setInterval(loadDepartures, 30 * 1000);
+// ---------- AUTO REFRESH ----------
+// Departures every 15s, weather every 10 min. Polling pauses while the screen
+// is off or the tab is backgrounded, then fires immediately on return so you
+// never read a board that went stale in your pocket.
+const REFRESH_MS = 15 * 1000;
+const WEATHER_MS = 10 * 60 * 1000;
 
-// Refresh the moment you bring the phone back from your pocket, so you never
-// read a stale board on the walk to the station.
+let nextRefreshAt = 0;
+let isFetching = false;
+let refreshTimer = null;
+let lastWeatherAt = 0;
+
+const refreshBtn = document.getElementById('refreshBtn');
+const refreshLabel = document.getElementById('refreshLabel');
+
+function paintRefreshLabel(){
+  if(isFetching){
+    refreshLabel.textContent = '···';
+    return;
+  }
+  if(document.visibilityState !== 'visible'){
+    refreshLabel.textContent = 'off';
+    return;
+  }
+  const left = Math.max(0, Math.ceil((nextRefreshAt - Date.now()) / 1000));
+  refreshLabel.textContent = `${left}s`;
+}
+
+async function runRefresh(){
+  if(isFetching) return;              // never let two fetches overlap
+  isFetching = true;
+  refreshBtn.classList.add('loading');
+  paintRefreshLabel();
+  try{
+    const jobs = [loadDepartures()];
+    if(Date.now() - lastWeatherAt > WEATHER_MS){
+      lastWeatherAt = Date.now();
+      jobs.push(loadWeather());
+    }
+    await Promise.allSettled(jobs);
+  } finally {
+    isFetching = false;
+    refreshBtn.classList.remove('loading');
+    nextRefreshAt = Date.now() + REFRESH_MS;
+    paintRefreshLabel();
+  }
+}
+
+function startAutoRefresh(){
+  stopAutoRefresh();
+  refreshBtn.classList.remove('paused');
+  nextRefreshAt = Date.now() + REFRESH_MS;
+  refreshTimer = setInterval(() => {
+    if(document.visibilityState !== 'visible') return;
+    tickCountdowns();
+    paintRefreshLabel();
+    if(Date.now() >= nextRefreshAt) runRefresh();
+  }, 1000);
+}
+
+function stopAutoRefresh(){
+  if(refreshTimer){ clearInterval(refreshTimer); refreshTimer = null; }
+}
+
+refreshBtn.addEventListener('click', () => {
+  nextRefreshAt = Date.now() + REFRESH_MS;
+  runRefresh();
+});
+
 document.addEventListener('visibilitychange', () => {
   if(document.visibilityState === 'visible'){
+    refreshBtn.classList.remove('paused');
     tickClock();
     tickCountdowns();
-    loadDepartures();
+    runRefresh();                     // resync the instant you unlock
+  } else {
+    refreshBtn.classList.add('paused');
+    paintRefreshLabel();
   }
 });
+
+lastWeatherAt = Date.now();
+loadWeather();
+runRefresh();
+startAutoRefresh();
 </script>
 </body>
 </html>
