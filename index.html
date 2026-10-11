@@ -1142,7 +1142,9 @@ async function fetchRailDepartures(){
       errors.push(`${base}: ${e.name === 'AbortError' ? 'timed out' : e.message}`);
     }
   }
-  return { ok:false, data:[], error:`All rail sources failed - ${errors.join(' | ')}` };
+  // Technical detail goes to the console; visitors just see a plain message.
+  console.warn('[rail] all sources failed:', errors.join(' | '));
+  return { ok:false, data:[], error:'Live National Rail times are unavailable right now.' };
 }
 
 // ---------- LIVE COUNTDOWN TICKERS ----------

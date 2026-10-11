@@ -22,6 +22,8 @@ The dashboard is designed around:
 
 Live departure information is retrieved from the Transport for London Unified API, including the Cutty Sark DLR arrivals endpoint.
 
+National Rail departures (Greenwich to London Bridge) came from public Darwin proxies, which now either block browser requests or require an API key. Until a keyed provider is configured, that panel shows "Live National Rail times are unavailable right now." and the DLR information is unaffected.
+
 ## Technology
 
 The project is built as a lightweight standalone webpage using:
